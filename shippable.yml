@@ -1,0 +1,7 @@
+resources:
+  - name: prov_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "Qhode/provision"
+      branch: master
