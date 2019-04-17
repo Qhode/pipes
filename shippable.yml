@@ -20,6 +20,47 @@ resources:
     type: integration
     integration: aws_rc_access
 
+  - name: kermit_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "Shippable/kermit"
+      branch: master
+
+  - name: kmicro_img
+    type: image
+    integration: aws_bits_access
+    versionTemplate:
+      sourceName: "374168611083.dkr.ecr.us-east-1.amazonaws.com/kmicro"
+      versionName: master
+
+  - name: kapi_img
+    type: image
+    integration: aws_bits_access
+    versionTemplate:
+      sourceName: "374168611083.dkr.ecr.us-east-1.amazonaws.com/kapi"
+      versionName: master
+
+  - name: kwww_img
+    type: image
+    integration: aws_bits_access
+    versionTemplate:
+      sourceName: "374168611083.dkr.ecr.us-east-1.amazonaws.com/kwww"
+      versionName: master
+
+  - name: kribbit_img
+    type: image
+    integration: aws_bits_access
+    versionTemplate:
+      sourceName: "374168611083.dkr.ecr.us-east-1.amazonaws.com/kribbit"
+      versionName: master
+
+  - name: kermit_bits_cli
+    type: cliConfig
+    integration: aws_bits_access
+    pointer:
+      region: us-east-1
+
 jobs:
   - name: kermit_prov
     type: runSh
@@ -46,3 +87,38 @@ jobs:
       script:
         - ./archiveProvisionState.sh kermit saas
         - popd
+
+  - name: kmicro_build
+    type: runSh
+    steps:
+      - IN: kermit_repo
+      - IN: kermit_bits_cli
+        scopes:
+          - ecr
+        switch: off
+      - TASK:
+          name: micro_build
+          runtime:
+            options:
+              env:
+                - IMG_OUT: "kmicro_img"
+                - RES_REPO: "kermit_repo"
+                - IMG: "kmicro"
+                - REL_VER: "master"
+
+          script:
+            - pushd $(shipctl get_resource_state "$RES_REPO")
+            - npm install -g jshint@v2.9.7
+            - pushd nod
+            - jshint .
+            - popd
+            - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
+            - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
+            - docker build -t=$IMG_NAME:$REL_VER .
+            - docker push $IMG_NAME:$REL_VER
+            - aws ecr list-images --repository-name $IMG --query 'imageIds[?type(imageTag)!=`string`].[imageDigest]' --output text | while read line; do aws ecr batch-delete-image --repository-name $IMG --image-ids imageDigest=$line; done
+      - OUT: kmicro_img
+    on_success:
+      script:
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+        - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
