@@ -44,6 +44,4 @@ jobs:
       - script: echo 'FAILURE!'
     always:
       script:
-        - pushd $(shipctl get_resource_state "prov_repo")
         - ./archiveProvisionState.sh kermit saas
-        - popd
