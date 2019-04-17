@@ -28,7 +28,7 @@ jobs:
         switch: off
       - IN: kermit_aws_key
         switch: off
-      - IN: kermit_state
+      - IN: kermit_saas_state
         switch: off
       - IN: prov_repo
         switch: off
