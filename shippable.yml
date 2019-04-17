@@ -108,10 +108,10 @@ jobs:
 
           script:
             - pushd $(shipctl get_resource_state "$RES_REPO")
-            - npm install -g jshint@v2.9.7
-            - pushd nod
-            - jshint .
-            - popd
+#            - npm install -g jshint@v2.9.7
+#            - pushd nod
+#            - jshint .
+#            - popd
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
             - docker build -t=$IMG_NAME:$REL_VER .
