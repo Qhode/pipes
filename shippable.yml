@@ -36,7 +36,6 @@ jobs:
           script:
             - pushd $(shipctl get_resource_state "prov_repo")
             - ./provision.sh kermit saas
-            - popd
       - OUT: kermit_saas_state
     on_success:
       - script: echo 'SUCCESS!'
@@ -45,3 +44,4 @@ jobs:
     always:
       script:
         - ./archiveProvisionState.sh kermit saas
+        - popd
