@@ -5,3 +5,41 @@ resources:
     pointer:
       sourceName: "Qhode/provision"
       branch: master
+
+  # Terraform State for Kermit
+  - name: kermit_state
+    type: state
+
+  # PEM key for AWS RC account
+  - name: kermit_aws_pem
+    type: integration
+    integration: aws-rc-pem
+
+  # CREDS for AWS RC account
+  - name: kermit_aws_key
+    type: integration
+    integration: aws_rc_access
+
+jobs:
+  - name: kermit_prov
+    type: runSh
+    steps:
+      - IN: kermit_aws_pem
+        switch: off
+      - IN: kermit_aws_key
+        switch: off
+      - IN: kermit_state
+        switch: off
+      - IN: prov_repo
+        switch: off
+      - TASK:
+          script:
+            - pushd $(shipctl get_resource_state "prov_repo")
+            - ./provision.sh kermit saas
+      - OUT: rc_saas_state
+    on_success:
+      - script: echo 'SUCCESS!'
+    on_failure:
+      - script: echo 'FAILURE!'
+    always:
+      - script: archiveProvisionState.sh kermit saas
