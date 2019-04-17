@@ -152,7 +152,7 @@ jobs:
             - docker build -t=$IMG_NAME:$REL_VER .
             - docker push $IMG_NAME:$REL_VER
             - aws ecr list-images --repository-name $IMG --query 'imageIds[?type(imageTag)!=`string`].[imageDigest]' --output text | while read line; do aws ecr batch-delete-image --repository-name $IMG --image-ids imageDigest=$line; done
-      - OUT: kmicro_img
+      - OUT: kapi_img
     on_success:
       script:
         - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
