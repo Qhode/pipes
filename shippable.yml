@@ -7,7 +7,7 @@ resources:
       branch: master
 
   # Terraform State for Kermit
-  - name: kermit_state
+  - name: kermit_saas_state
     type: state
 
   # PEM key for AWS RC account
@@ -37,7 +37,7 @@ jobs:
             - pushd $(shipctl get_resource_state "prov_repo")
             - ./provision.sh kermit saas
             - popd
-      - OUT: kermit_state
+      - OUT: kermit_saas_state
     on_success:
       - script: echo 'SUCCESS!'
     on_failure:
