@@ -219,7 +219,7 @@ jobs:
                 - REL_VER: "master"
 
           script:
-            - pushd $(shipctl get_resource_state "$RES_REPO")/nod/www
+            - pushd $(shipctl get_resource_state "$RES_REPO")
             #            - npm install -g jshint@v2.9.7
             #            - pushd nod
             #            - jshint .
