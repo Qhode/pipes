@@ -278,7 +278,7 @@ jobs:
             - export KWWW_IMG=$(shipctl get_resource_version_key kwww_img IMG_NAME)
             - export KAPI_IMG=$(shipctl get_resource_version_key kapi_img IMG_NAME)
             - export KMICRO_IMG=$(shipctl get_resource_version_key kmicro_img IMG_NAME)
-            - pushd $(shipctl get_resource_state "shipit_repo")
+            - pushd $(shipctl get_resource_state "pipes_repo")
             - ./deployKermit.sh
             - popd
 
