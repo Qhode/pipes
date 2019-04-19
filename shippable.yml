@@ -274,8 +274,11 @@ jobs:
           script:
             - export BASTION_IP=$(shipctl get_resource_version_key kermit_saas_state nat_pub_ip)
             - export ONEBOX_IP=$(shipctl get_resource_version_key kermit_saas_state onebox_priv_ip)
-            - export
+            - export KRIBBIT_IMG=$(shipctl get_resource_version_key kribbit_img IMG_NAME)
+            - export KWWW_IMG=$(shipctl get_resource_version_key kwww_img IMG_NAME)
+            - export KAPI_IMG=$(shipctl get_resource_version_key kapi_img IMG_NAME)
+            - export KMICRO_IMG=$(shipctl get_resource_version_key kmicro_img IMG_NAME)
             - pushd $(shipctl get_resource_state "shipit_repo")
-            - ./deployRc.sh
+            - ./deployKermit.sh
             - popd
 

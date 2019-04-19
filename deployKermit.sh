@@ -38,6 +38,39 @@ pull_ribbit_repo() {
   echo "Successfully pulled admiral-repo"
 }
 
+pull_images() {
+  echo "Pulling images to deplor for $DEPLOY_VERSION to OneBox"
+  echo "AWS login has occurred, will need to change once we move to artifactory"
+  echo "--------------------------------------"
+
+  echo "SSH key file list"
+  ssh-add -L
+
+  local pull_command="sudo docker pull $KRIBBIT_IMG:$DEPLOY_VERSION"
+  echo "--------------------------------------"
+  echo "Executing inspect command: $pull_command"
+  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_command"
+  echo "-------------------------------------"
+
+  local pull_command="sudo docker pull $KWWW_IMG:$DEPLOY_VERSION"
+  echo "--------------------------------------"
+  echo "Executing inspect command: $pull_command"
+  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_command"
+  echo "-------------------------------------"
+
+  local pull_command="sudo docker pull $KAPI_IMG:$DEPLOY_VERSION"
+  echo "--------------------------------------"
+  echo "Executing inspect command: $pull_command"
+  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_command"
+  echo "-------------------------------------"
+
+  local pull_command="sudo docker pull $KMICRO_IMG:$DEPLOY_VERSION"
+  echo "--------------------------------------"
+  echo "Executing inspect command: $pull_command"
+  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_command"
+  echo "-------------------------------------"
+}
+
 deploy() {
   echo "Deploying the release $DEPLOY_VERSION to OneBox"
   echo "--------------------------------------"
@@ -70,6 +103,7 @@ main() {
   set_context
   configure_node_creds
 #  pull_ribbit_repo
+  pull_images
   deploy
 #  create_version
 }
