@@ -43,30 +43,33 @@ pull_images() {
   echo "AWS login has occurred, will need to change once we move to artifactory"
   echo "--------------------------------------"
 
-  echo "SSH key file list"
-  ssh-add -L
+  local login_command="sudo $(aws ecr get-login --no-include-email --region us-east-1)"
+  echo "--------------------------------------"
+  echo "Executing login command: $login_command"
+  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$login_command"
+  echo "-------------------------------------"
 
   local pull_command="sudo docker pull $KRIBBIT_IMG:$DEPLOY_VERSION"
   echo "--------------------------------------"
-  echo "Executing inspect command: $pull_command"
+  echo "Executing pull command: $pull_command"
   ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_command"
   echo "-------------------------------------"
 
   local pull_command="sudo docker pull $KWWW_IMG:$DEPLOY_VERSION"
   echo "--------------------------------------"
-  echo "Executing inspect command: $pull_command"
+  echo "Executing pull command: $pull_command"
   ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_command"
   echo "-------------------------------------"
 
   local pull_command="sudo docker pull $KAPI_IMG:$DEPLOY_VERSION"
   echo "--------------------------------------"
-  echo "Executing inspect command: $pull_command"
+  echo "Executing pull command: $pull_command"
   ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_command"
   echo "-------------------------------------"
 
   local pull_command="sudo docker pull $KMICRO_IMG:$DEPLOY_VERSION"
   echo "--------------------------------------"
-  echo "Executing inspect command: $pull_command"
+  echo "Executing pull command: $pull_command"
   ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_command"
   echo "-------------------------------------"
 }
