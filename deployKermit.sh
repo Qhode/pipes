@@ -3,14 +3,13 @@
 set_context() {
   echo "CURR_JOB=$JOB_NAME"
   echo "DEPLOY_VERSION=$DEPLOY_VERSION"
-
   echo "BASTION_USER=$BASTION_USER"
   echo "BASTION_IP=$BASTION_IP"
   echo "ONEBOX_USER=$ONEBOX_USER"
   echo "ONEBOX_IP=$ONEBOX_IP"
 }
 
-configure_node_creds() {
+configure_ssh_creds() {
   echo "Extracting AWS PEM"
   echo "-----------------------------------"
   pushd $(shipctl get_resource_meta "$RES_PEM")
@@ -28,18 +27,27 @@ configure_node_creds() {
   ssh-add key.pem
   echo "SSH key added successfully"
   echo "--------------------------------------"
+
+  echo "SSH key file list"
+  ssh-add -L
+
+  local inspect_command="ip addr"
+  echo "Executing inspect command: $inspect_command"
+  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$inspect_command"
+  echo "-------------------------------------="
+
   popd
 }
 
 pull_ribbit_repo() {
-  echo "Pull admiral-repo started"
+  echo "Pull ribbit-repo started"
   local PULL_CMD="git -C /home/ubuntu/ribbit pull origin master"
   ssh -A $BASTION_USER@$BASTION_IP ssh $SWARM_USER@$SWARM_IP "$PULL_CMD"
-  echo "Successfully pulled admiral-repo"
+  echo "Successfully pulled ribbit-repo"
 }
 
 pull_images() {
-  echo "Pulling images to deplor for $DEPLOY_VERSION to OneBox"
+  echo "Pulling images to deploy for $DEPLOY_VERSION to OneBox"
   echo "AWS login has occurred, will need to change once we move to artifactory"
   echo "--------------------------------------"
 
@@ -78,18 +86,10 @@ deploy() {
   echo "Deploying the release $DEPLOY_VERSION to OneBox"
   echo "--------------------------------------"
 
-  echo "SSH key file list"
-  ssh-add -L
-
-  local inspect_command="ip addr"
-  echo "Executing inspect command: $inspect_command"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$inspect_command"
+  local deploy_command="sudo /home/ubuntu/ribbit/ribbit.sh upgrade"
+  echo "Executing deploy command: $deploy_command"
+  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$deploy_command"
   echo "-------------------------------------="
-
-#  local deploy_command="sudo /home/ubuntu/ribbit/ribbit.sh upgrade"
-#  echo "Executing deploy command: $deploy_command"
-#  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$deploy_command"
-#  echo "-------------------------------------="
 
   echo "Successfully deployed release $DEPLOY_VERSION to Onebox env"
 }
@@ -104,8 +104,8 @@ create_version() {
 main() {
   eval $(ssh-agent -s)
   set_context
-  configure_node_creds
-#  pull_ribbit_repo
+  configure_ssh_creds
+  pull_ribbit_repo
   pull_images
   deploy
 #  create_version
