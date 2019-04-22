@@ -86,7 +86,7 @@ deploy() {
   echo "Deploying the release $DEPLOY_VERSION to OneBox"
   echo "--------------------------------------"
 
-  local deploy_command="sudo /home/ubuntu/ribbit/ribbit.sh upgrade"
+  local deploy_command="sudo /home/ubuntu/ribbit/ribbit upgrade"
   echo "Executing deploy command: $deploy_command"
   ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$deploy_command"
   echo "-------------------------------------="
