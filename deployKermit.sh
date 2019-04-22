@@ -41,8 +41,8 @@ configure_ssh_creds() {
 
 pull_ribbit_repo() {
   echo "Pull ribbit-repo started"
-  local PULL_CMD="git -C /home/ubuntu/ribbit pull origin master"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $SWARM_USER@$SWARM_IP "$PULL_CMD"
+  local pull_cmd="git -C /home/ubuntu/ribbit pull origin master"
+  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_cmd"
   echo "Successfully pulled ribbit-repo"
 }
 
