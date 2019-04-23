@@ -5,6 +5,7 @@ _exec_cmd(){
   echo "Executing command: $exec_string"
   ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$exec_string"
   echo "-------------------------------------="
+  echo "Successfully executed command: $exec_string"
 }
 
 set_context() {
@@ -38,94 +39,42 @@ configure_ssh_creds() {
   echo "SSH key file list"
   ssh-add -L
 
-  local inspect_command="ip addr"
-#  echo "Executing inspect command: $inspect_command"
-#  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$inspect_command"
-#  echo "-------------------------------------="
-
-  _exec_cmd "$inspect_command"
+  _exec_cmd "ip addr"
 
   popd
 }
 
 pull_ribbit_repo() {
-  echo "Pull ribbit-repo started"
-  local pull_cmd="git -C /home/ubuntu/ribbit pull origin master"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_cmd"
-  echo "Successfully pulled ribbit-repo"
+  _exec_cmd "git -C /home/ubuntu/ribbit pull origin master"
 }
 
 pull_images() {
   echo "Pulling images to deploy for $DEPLOY_VERSION to OneBox"
   echo "AWS login has occurred, will need to change once we move to artifactory"
+  _exec_cmd "sudo $(aws ecr get-login --no-include-email --region us-east-1)"
   echo "--------------------------------------"
 
-  local login_command="sudo $(aws ecr get-login --no-include-email --region us-east-1)"
-  echo "--------------------------------------"
-  echo "Executing login command: $login_command"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$login_command"
-  echo "-------------------------------------"
+  _exec_cmd "sudo docker pull $KRIBBIT_IMG:$DEPLOY_VERSION"
+  _exec_cmd "sudo docker pull $KWWW_IMG:$DEPLOY_VERSION"
+  _exec_cmd "sudo docker pull $KAPI_IMG:$DEPLOY_VERSION"
+  _exec_cmd "sudo docker pull $KMICRO_IMG:$DEPLOY_VERSION"
 
-  local pull_command="sudo docker pull $KRIBBIT_IMG:$DEPLOY_VERSION"
-  echo "--------------------------------------"
-  echo "Executing pull command: $pull_command"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_command"
-  echo "-------------------------------------"
-
-  local pull_command="sudo docker pull $KWWW_IMG:$DEPLOY_VERSION"
-  echo "--------------------------------------"
-  echo "Executing pull command: $pull_command"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_command"
-  echo "-------------------------------------"
-
-  local pull_command="sudo docker pull $KAPI_IMG:$DEPLOY_VERSION"
-  echo "--------------------------------------"
-  echo "Executing pull command: $pull_command"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_command"
-  echo "-------------------------------------"
-
-  local pull_command="sudo docker pull $KMICRO_IMG:$DEPLOY_VERSION"
-  echo "--------------------------------------"
-  echo "Executing pull command: $pull_command"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$pull_command"
-  echo "-------------------------------------"
 }
 
 temp_tag(){
-  local tag_command="sudo docker tag $KRIBBIT_IMG:$DEPLOY_VERSION drydock/ribbit:$DEPLOY_VERSION"
-  echo "--------------------------------------"
-  echo "Executing tag command: $tag_command"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$tag_command"
-  echo "-------------------------------------"
-
-  local tag_command="sudo docker tag $KWWW_IMG:$DEPLOY_VERSION drydock/www:$DEPLOY_VERSION"
-  echo "--------------------------------------"
-  echo "Executing tag command: $tag_command"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$tag_command"
-  echo "-------------------------------------"
-
-  local tag_command="sudo docker tag $KAPI_IMG:$DEPLOY_VERSION drydock/api:$DEPLOY_VERSION"
-  echo "--------------------------------------"
-  echo "Executing tag command: $tag_command"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$tag_command"
-  echo "-------------------------------------"
-
-  local tag_command="sudo docker tag $KMICRO_IMG:$DEPLOY_VERSION drydock/kmicro:$DEPLOY_VERSION"
-  echo "--------------------------------------"
-  echo "Executing tag command: $tag_command"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$tag_command"
-  echo "-------------------------------------"
+  _exec_cmd "sudo docker tag $KRIBBIT_IMG:$DEPLOY_VERSION drydock/ribbit:$DEPLOY_VERSION"
+  _exec_cmd "sudo docker tag $KWWW_IMG:$DEPLOY_VERSION drydock/www:$DEPLOY_VERSION"
+  _exec_cmd "sudo docker tag $KAPI_IMG:$DEPLOY_VERSION drydock/api:$DEPLOY_VERSION"
+  _exec_cmd "sudo docker tag $KMICRO_IMG:$DEPLOY_VERSION drydock/kmicro:$DEPLOY_VERSION"
 }
 
 deploy() {
   echo "Deploying the release $DEPLOY_VERSION to OneBox"
   echo "--------------------------------------"
 
-  local deploy_command="sudo /home/ubuntu/ribbit/ribbit upgrade"
-  echo "Executing deploy command: $deploy_command"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$deploy_command"
-  echo "-------------------------------------="
+  _exec_cmd "sudo /home/ubuntu/ribbit/ribbit upgrade"
 
+  echo "--------------------------------------"
   echo "Successfully deployed release $DEPLOY_VERSION to Onebox env"
 }
 
