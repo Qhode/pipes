@@ -2,10 +2,13 @@
 
 _exec_cmd(){
   exec_string="$1"
+  echo ""
   echo "Executing command: $exec_string"
+  echo "-------------------------------------"
   ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$exec_string"
-  echo "-------------------------------------="
+  echo "-------------------------------------"
   echo "Successfully executed command: $exec_string"
+  echo ""
 }
 
 set_context() {
