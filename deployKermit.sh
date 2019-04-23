@@ -1,5 +1,12 @@
 #!/bin/bash -e
 
+_exec_cmd(){
+  exec_string=$1
+  echo "Executing command: $exec_string"
+  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$exec_string"
+  echo "-------------------------------------="
+}
+
 set_context() {
   echo "CURR_JOB=$JOB_NAME"
   echo "DEPLOY_VERSION=$DEPLOY_VERSION"
@@ -32,9 +39,11 @@ configure_ssh_creds() {
   ssh-add -L
 
   local inspect_command="ip addr"
-  echo "Executing inspect command: $inspect_command"
-  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$inspect_command"
-  echo "-------------------------------------="
+#  echo "Executing inspect command: $inspect_command"
+#  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$inspect_command"
+#  echo "-------------------------------------="
+
+  _exec_cmd $inspect_command
 
   popd
 }
