@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 _exec_cmd(){
-  exec_string=$1
+  exec_string="$1"
   echo "Executing command: $exec_string"
   ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$exec_string"
   echo "-------------------------------------="
