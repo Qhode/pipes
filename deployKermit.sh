@@ -82,6 +82,32 @@ pull_images() {
   echo "-------------------------------------"
 }
 
+temp_tag(){
+  local tag_command="sudo docker tag $KRIBBIT_IMG:$DEPLOY_VERSION drydock/ribbit:$DEPLOY_VERSION"
+  echo "--------------------------------------"
+  echo "Executing pull command: $tag_command"
+  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$tag_command"
+  echo "-------------------------------------"
+
+  local tag_command="sudo docker tag $KWWW_IMG:$DEPLOY_VERSION drydock/www:$DEPLOY_VERSION"
+  echo "--------------------------------------"
+  echo "Executing pull command: $tag_command"
+  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$tag_command"
+  echo "-------------------------------------"
+
+  local tag_command="sudo docker tag $KAPI_IMG:$DEPLOY_VERSION drydock/api:$DEPLOY_VERSION"
+  echo "--------------------------------------"
+  echo "Executing pull command: $tag_command"
+  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$tag_command"
+  echo "-------------------------------------"
+
+  local tag_command="sudo docker tag $KMICRO_IMG:$DEPLOY_VERSION drydock/kmicro:$DEPLOY_VERSION"
+  echo "--------------------------------------"
+  echo "Executing pull command: $tag_command"
+  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$tag_command"
+  echo "-------------------------------------"
+}
+
 deploy() {
   echo "Deploying the release $DEPLOY_VERSION to OneBox"
   echo "--------------------------------------"
@@ -107,6 +133,7 @@ main() {
   configure_ssh_creds
   pull_ribbit_repo
   pull_images
+  temp_tag
   deploy
 #  create_version
 }
