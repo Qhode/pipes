@@ -43,7 +43,7 @@ configure_ssh_creds() {
 #  ssh -A $BASTION_USER@$BASTION_IP ssh $ONEBOX_USER@$ONEBOX_IP "$inspect_command"
 #  echo "-------------------------------------="
 
-  _exec_cmd $inspect_command
+  _exec_cmd "$inspect_command"
 
   popd
 }
