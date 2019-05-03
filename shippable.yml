@@ -41,6 +41,27 @@ resources:
       sourceName: "Shippable/ribbit"
       branch: master
 
+  - name: knodeInit_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "Shippable/kermit-nodeInit"
+      branch: master
+
+  - name: kreqProc_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "Shippable/kermit-reqProc"
+      branch: master
+
+  - name: kreqKick_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "Shippable/kermit-reqKick"
+      branch: master
+
   - name: kmicro_img
     type: image
     integration: aws_bits_access
@@ -69,11 +90,32 @@ resources:
       sourceName: "374168611083.dkr.ecr.us-east-1.amazonaws.com/kribbit"
       versionName: master
 
+  - name: kreqProc_img
+    type: image
+    integration: qhodeDH
+    versionTemplate:
+      sourceName: "drydock/kermit-u16reqproc"
+      versionName: master
+
   - name: kermit_bits_cli
     type: cliConfig
     integration: aws_bits_access
     pointer:
       region: us-east-1
+
+  - name: drydock_cli
+    type: cliConfig
+    integration: qhodeDH
+
+  - name: aws_x8664_u16_img_params
+    type: params
+    version:
+      params:
+        SOURCE_AMI: "ami-66506c1c"
+        VPC_ID: "vpc-c52929a2"
+        SUBNET_ID: "subnet-70a92d39"
+        SECURITY_GROUP_ID: "sg-0079737a"
+        REGION: "us-east-1"
 
 jobs:
   - name: kermit_prov
@@ -282,3 +324,65 @@ jobs:
             - ./deployKermit.sh
             - popd
 
+  - name: kreqProc_x8664_u16_build
+    type: runSh
+    steps:
+      - IN: kreqProc_repo
+      - IN: drydock_cli
+        switch: off
+      - TASK:
+          name: kreqProc_build
+          runtime:
+            options:
+              env:
+                - IMG_OUT: "kreqProc_img"
+                - RES_REPO: "kreqProc_repo"
+                - IMG: "kreqProc"
+                - REL_VER: "master"
+                - OS: Ubuntu_16.04
+                - ARCH: x86_64
+
+          script:
+            - pushd $(shipctl get_resource_state "$RES_REPO")
+            #            - npm install -g jshint@v2.9.7
+            #            - pushd nod
+            #            - jshint .
+            #            - popd
+            - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
+            - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
+            - sed -i "s/{{%TAG%}}/$REL_VER/g" ./image/$ARCH/$OS/Dockerfile
+            - docker build -t=$IMG_NAME:$REL_VER -f image/$ARCH/$OS/Dockerfile .
+            - docker push $IMG_NAME:$REL_VER
+      - OUT: kreqProc_img
+    on_success:
+      script:
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+        - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+
+  - name: prep_aws_x8664_u16_img
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: kermit_bits_cli
+        switch: off
+      - IN: aws_x8664_u16_img_params
+        switch: off
+      - IN: knodeInit_repo
+      - IN: kreqKick_repo
+      - IN: kreqProc_img
+      - IN: pipes_repo
+        switch: off
+      - TASK:
+          name: prep_aws_x8664_u16_img
+          runtime:
+            options:
+              env:
+                - OS: Ubuntu_16.04
+                - ARCH: x86_64
+          script:
+            - pushd $(shipctl get_resource_state "pipes_repo")
+            - cd aws/$ARCH/$OS
+            - ./pack.sh prep_aws_x8664_u16_img kermit_bits_cli
+            - popd
+    on_failure:
+      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCH/$OS/output.txt
