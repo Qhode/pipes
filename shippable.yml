@@ -62,6 +62,13 @@ resources:
       sourceName: "Shippable/kermit-reqKick"
       branch: master
 
+  - name: kexecTemplates_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "Shippable/kermit-execTemplates"
+      branch: master
+
   - name: kmicro_img
     type: image
     integration: aws_bits_access
@@ -328,6 +335,7 @@ jobs:
     type: runSh
     steps:
       - IN: kreqProc_repo
+      - IN: kexecTemplates_repo
       - IN: drydock_cli
         switch: off
       - TASK:
