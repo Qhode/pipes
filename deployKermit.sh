@@ -73,13 +73,7 @@ temp_tag(){
 
 update_creds(){
   echo "Updating registry credentials to automatically pull images"
-  local docker_config="/home/ubuntu/.docker/config.json"
-  if [ -f "$docker_config" ]; then
-    echo "Found docker config, updating registry credentials"
-    _exec_cmd "sudo cp -vr $docker_config /opt/jfrog/shippable/etc/registry_creds.json"
-  else
-    echo "No docker config present, skipping credentials update"
-  fi
+  _exec_cmd "sudo cp -vr $docker_config /opt/jfrog/shippable/etc/registry_creds.json || true"
 }
 
 deploy() {
