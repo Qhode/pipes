@@ -73,6 +73,7 @@ temp_tag(){
 
 update_creds(){
   echo "Updating registry credentials to automatically pull images"
+  local docker_config="/home/ubuntu/.docker/config.json"
   _exec_cmd "sudo cp -vr $docker_config /opt/jfrog/shippable/etc/registry_creds.json || true"
 }
 
