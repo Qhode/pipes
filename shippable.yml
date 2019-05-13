@@ -190,6 +190,8 @@ jobs:
     type: runSh
     steps:
       - IN: kermit_repo
+      - IN: knodeInit_repo
+      - IN: kreqKick_repo
       - IN: kermit_bits_cli
         scopes:
           - ecr
