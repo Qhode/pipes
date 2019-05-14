@@ -69,6 +69,13 @@ resources:
       sourceName: "Shippable/kermit-execTemplates"
       branch: master
 
+  - name: u16nod_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/u16node"
+      branch: master
+
   - name: kmicro_img
     type: image
     integration: aws_bits_access
@@ -396,3 +403,21 @@ jobs:
             - popd
     on_failure:
       - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCH/$OS/output.txt
+
+  - name: u16nod_x8664_build
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: u16nod_repo
+      - TASK:
+          name: u16nod_build
+          runtime:
+            options:
+              env:
+                - IMG_REPO_NAME: "drydock"
+                - IMG_NAME: "u16nod"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state u16nod_repo)
+            - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
