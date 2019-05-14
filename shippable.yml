@@ -368,7 +368,7 @@ jobs:
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
             - sed -i "s/{{%TAG%}}/$REL_VER/g" ./image/$ARCH/$OS/Dockerfile
-            - docker build --no-cache -t=$IMG_NAME:$REL_VER -f image/$ARCH/$OS/Dockerfile .
+            - docker build --pull --no-cache -t=$IMG_NAME:$REL_VER -f image/$ARCH/$OS/Dockerfile .
             - docker push $IMG_NAME:$REL_VER
       - OUT: kreqProc_img
     on_success:
