@@ -409,6 +409,7 @@ jobs:
     dependencyMode: strict
     steps:
       - IN: u16nod_repo
+      - IN: drydock_cli
       - TASK:
           name: u16nod_build
           runtime:
