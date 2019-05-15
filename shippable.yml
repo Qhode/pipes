@@ -69,6 +69,13 @@ resources:
       sourceName: "Shippable/kermit-execTemplates"
       branch: master
 
+  - name: kreqExec_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "Shippable/kermit-reqExec"
+      branch: master
+
   - name: u16nod_repo
     type: gitRepo
     integration: "qhode_gh"
@@ -109,6 +116,13 @@ resources:
     integration: qhodeDH
     versionTemplate:
       sourceName: "drydock/kermit-u16reqproc"
+      versionName: master
+
+  - name: kreqProc_w19_img
+    type: image
+    integration: qhodeDH
+    versionTemplate:
+      sourceName: "drydock/kermit-w19reqproc"
       versionName: master
 
   - name: kermit_bits_cli
@@ -371,6 +385,54 @@ jobs:
             - docker build --pull --no-cache -t=$IMG_NAME:$REL_VER -f image/$ARCH/$OS/Dockerfile .
             - docker push $IMG_NAME:$REL_VER
       - OUT: kreqProc_img
+    on_success:
+      script:
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+        - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+
+  - name: kreqProc_x8664_w19_build
+    type: runSh
+    steps:
+      - IN: kreqProc_repo
+      - IN: kexecTemplates_repo
+      - IN: kreqExec_repo
+      - IN: drydock_cli
+        switch: off
+      - TASK:
+          name: kreqProc_w19_build
+          runtime:
+            options:
+              env:
+                - IMG_OUT: "kreqProc_w19_img"
+                - RES_REPO: "kreqProc_repo"
+                - IMG: "kreqProc"
+                - REL_VER: "master"
+                - OS: WindowsServer_2019
+                - ARCH: x86_64
+          script:
+            - $script:RES_REPO_COMMIT=$(shipctl get_resource_version_key "$env:RES_REPO" "shaData.commitSha")
+            - $script:IMG_NAME=$(shipctl get_resource_version_key "$env:IMG_OUT" "sourceName")
+            - $script:DH_USR_NAME=$(shipctl get_integration_resource_field "$env:IMG_OUT" "userName")
+            - $script:DH_PASS=$(shipctl get_integration_resource_field "$env:IMG_OUT" "password")
+            - pushd $(shipctl get_resource_state "$env:RES_REPO")
+            - |
+              mkdir execTemplates;
+              $script:EXECTEMPLATES_REPO_PATH = $(shipctl get_resource_state "kexecTemplates_repo");
+              Write-Output Copying execTemplates from $script:EXECTEMPLATES_REPO_PATH;
+              cp -recurse ${script:EXECTEMPLATES_REPO_PATH}\* execTemplates;
+            - |
+              mkdir reqExec;
+              $script:REQEXEC_REPO_PATH = $(shipctl get_resource_state "kreqExec_repo")
+              Write-Output Copying reqExec from $script:REQEXEC_REPO_PATH;
+              cp -recurse ${script:REQEXEC_REPO_PATH}\* reqExec;
+            - |
+              mkdir node
+              $script:NODE_REPO_PATH = $(shipctl get_resource_state "node_sh_repo");
+              cp -recurse ${script:NODE_REPO_PATH}\* node;
+            - docker build --no-cache -f ./image/${env:ARCHITECTURE}/${env:OS}/Dockerfile -t "${IMG_NAME}:${env:REL_VER}" .
+            - docker login -u "$DH_USR_NAME" -p "$DH_PASS"
+            - docker push "${IMG_NAME}:${env:REL_VER}"
+      - OUT: kreqProc_w19_img
     on_success:
       script:
         - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
