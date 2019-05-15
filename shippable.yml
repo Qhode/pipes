@@ -392,6 +392,8 @@ jobs:
 
   - name: kreqProc_x8664_w19_build
     type: runSh
+    runtime:
+      nodePool: dynamic_w16
     steps:
       - IN: kreqProc_repo
       - IN: kexecTemplates_repo
