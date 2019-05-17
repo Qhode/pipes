@@ -90,6 +90,13 @@ resources:
       sourceName: "dry-dock/c7node"
       branch: master
 
+  - name: w19node_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/w19node"
+      branch: master
+
   - name: kmicro_img
     type: image
     integration: aws_bits_access
@@ -510,5 +517,24 @@ jobs:
                 - REL_VER: "master"
           script:
             - pushd $(shipctl get_resource_state c7node_repo)
+            - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+
+  - name: w19node_x8664_build
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: w19node_repo
+      - IN: drydock_cli
+      - TASK:
+          name: w19node_build
+          runtime:
+            options:
+              env:
+                - IMG_REPO_NAME: "drydock"
+                - IMG_NAME: "w19node"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state w19node_repo)
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
             - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
