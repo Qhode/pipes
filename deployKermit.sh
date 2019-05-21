@@ -48,7 +48,7 @@ configure_ssh_creds() {
 }
 
 pull_ribbit_repo() {
-  _exec_cmd "git -C /home/ubuntu/ribbit pull origin master"
+  _exec_cmd "git -C $HOME/ribbit pull origin master"
 }
 
 pull_images() {
@@ -73,7 +73,8 @@ temp_tag(){
 
 update_creds(){
   echo "Updating registry credentials to automatically pull images"
-  local docker_config="/home/ubuntu/.docker/config.json"
+  #local docker_config="/home/ubuntu/.docker/config.json"
+  local docker_config="/root/.docker/config.json"
   _exec_cmd "sudo cp -vr $docker_config /opt/jfrog/shippable/etc/registry_creds.json || true"
 }
 
@@ -81,7 +82,7 @@ deploy() {
   echo "Deploying the release $DEPLOY_VERSION to OneBox"
   echo "--------------------------------------"
 
-  _exec_cmd "sudo /home/ubuntu/ribbit/ribbit upgrade"
+  _exec_cmd "sudo $HOME/ribbit/ribbit upgrade"
 
   echo "--------------------------------------"
   echo "Successfully deployed release $DEPLOY_VERSION to Onebox env"
