@@ -340,7 +340,7 @@ jobs:
               env:
                 - RES_PEM: "kermit_aws_pem"
                 - BASTION_USER: "ec2-user"
-                - ONEBOX_USER: "ubuntu"
+                - ONEBOX_USER: "centos"
                 - DEPLOY_VERSION: "master"
           name: deploy_to_ob
           script:
