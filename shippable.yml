@@ -101,6 +101,7 @@ resources:
     type: image
     versionTemplate:
       sourceName: "pipelines-docker.jfrog.io/postgres"
+      version: master
 
   - name: kmicro_img
     type: image
