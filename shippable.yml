@@ -28,7 +28,7 @@ resources:
     integration: aws_rc_access
 
   # CREDS for RT instance
-  - name: rt_key
+  - name: rt_creds
     type: integration
     integration: rt_key
 
@@ -194,7 +194,7 @@ jobs:
     type: runSh
     steps:
       - IN: kdb_repo
-      - IN: rt_key
+      - IN: rt_creds
       - TASK:
           name: kdb_build
           runtime:
@@ -206,9 +206,9 @@ jobs:
                 - REL_VER: "master"
           script:
             - pushd $(shipctl get_resource_state "$RES_REPO")
-            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_key" "API_KEY")
-            - RT_USER=$(shipctl get_integration_resource_field "rt_key" "USER")
-            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_key" "REGISTRY")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
             - IMG_NAME="$REGISTRY/$IMG_NAME"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
