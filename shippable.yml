@@ -105,7 +105,7 @@ resources:
   - name: kdb_img
     type: image
     versionTemplate:
-      sourceName: "pipelines-docker.jfrog.io/postgres"
+      sourceName: "postgres"
       versionName: master
 
   - name: kmicro_img
@@ -205,13 +205,17 @@ jobs:
                 - IMG: "postgres"
                 - REL_VER: "master"
           script:
-            - echo "Running database build"
+            - pushd $(shipctl get_resource_state "$RES_REPO")
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_key" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_key" "USER")
-            - echo "$RT_API_KEY"
-            - echo "$RT_USER"
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_key" "REGISTRY")
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
+            - IMG_NAME="$REGISTRY/$IMG_NAME"
+            - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
+            - docker build -t=$IMG_NAME:$REL_VER .
+            - docker push $IMG_NAME:$REL_VER
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
+
       - OUT: kdb_img
     on_success:
       script:
