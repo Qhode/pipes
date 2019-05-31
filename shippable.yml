@@ -517,10 +517,11 @@ jobs:
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
             - docker tag "$IMG_NAME:$REL_VER" "$RT_IMG_NAME:$REL_VER"
             - docker push $RT_IMG_NAME:$REL_VER
+            - popd
             - echo "----------- Pushing tarfile to Artifactory ----------"
             - RIBBIT_REPO_DIR=$(shipctl get_resource_state "$RES_REPO")
             - TAR_FILENAME="pipelines-$REL_VER.tar.gz"
-            - tar -zcvf "$TAR_FILENAME" -C "$RIBBIT_REPO_DIR" .
+            - tar -zcf "$TAR_FILENAME" -C "$RIBBIT_REPO_DIR" .
             - curl -T $TAR_FILENAME $RT_BUCKET -u$RT_USER:$RT_API_KEY
       - OUT: kribbit_img
     on_success:
