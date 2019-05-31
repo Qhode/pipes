@@ -69,7 +69,7 @@ resources:
       sourceName: "Shippable/kermit-execTemplates"
       branch: master
 
-  - name: db_repo
+  - name: kdb_repo
     type: gitRepo
     integration: "qhode_gh"
     pointer:
@@ -187,15 +187,15 @@ jobs:
   - name: db_build
     type: runSh
     steps:
-      - IN: db_repo
+      - IN: kdb_repo
       - IN: rt_key
       - TASK:
           name: db_build
           runtime:
             options:
               env:
-                - IMG_OUT: "db_img"
-                - RES_REPO: "db_repo"
+                - IMG_OUT: "kdb_img"
+                - RES_REPO: "kdb_repo"
                 - IMG: "postgres"
                 - REL_VER: "master"
           script:
