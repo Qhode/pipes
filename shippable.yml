@@ -184,13 +184,13 @@ jobs:
         - ./archiveProvisionState.sh kermit saas
         - popd
 
-  - name: db_build
+  - name: kdb_build
     type: runSh
     steps:
       - IN: kdb_repo
       - IN: rt_key
       - TASK:
-          name: db_build
+          name: kdb_build
           runtime:
             options:
               env:
