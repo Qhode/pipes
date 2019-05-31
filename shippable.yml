@@ -69,6 +69,13 @@ resources:
       sourceName: "Shippable/kermit-execTemplates"
       branch: master
 
+  - name: kdb_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/postgres"
+      branch: master
+
   - name: u16node_repo
     type: gitRepo
     integration: "qhode_gh"
@@ -89,6 +96,11 @@ resources:
     pointer:
       sourceName: "dry-dock/c7node"
       branch: master
+
+  - name: kdb_img
+    type: image
+    versionTemplate:
+      sourceName: "pipelines-docker.jfrog.io/postgres"
 
   - name: kmicro_img
     type: image
@@ -171,6 +183,31 @@ jobs:
       script:
         - ./archiveProvisionState.sh kermit saas
         - popd
+
+  - name: kdb_build
+    type: runSh
+    steps:
+      - IN: kdb_repo
+      - IN: rt_key
+      - TASK:
+          name: kdb_build
+          runtime:
+            options:
+              env:
+                - IMG_OUT: "kdb_img"
+                - RES_REPO: "kdb_repo"
+                - IMG: "postgres"
+                - REL_VER: "master"
+          script:
+            - echo "Running database build"
+            - echo "$RT_KEY_API_KEY"
+            - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
+            - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
+      - OUT: kdb_img
+    on_success:
+      script:
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+        - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
 
   - name: kmicro_build
     type: runSh
