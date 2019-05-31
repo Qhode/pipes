@@ -484,7 +484,7 @@ jobs:
             - RT_IMG_NAME=$(echo $IMG_NAME | cut'/' -f1)
             - RT_IMG_NAME="$REGISTRY/$RT_IMG_NAME"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
-            - docker build -t=$RT_IMG_NAME:$REL_VER .
+            - docker tag "$IMG_NAME:$REL_VER" "$RT_IMG_NAME:$REL_VER"
             - docker push $RT_IMG_NAME:$REL_VER
       - OUT: kribbit_img
     on_success:
