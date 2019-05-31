@@ -69,6 +69,13 @@ resources:
       sourceName: "Shippable/kermit-execTemplates"
       branch: master
 
+  - name: db_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/postgres"
+      branch: master
+
   - name: u16node_repo
     type: gitRepo
     integration: "qhode_gh"
@@ -89,6 +96,11 @@ resources:
     pointer:
       sourceName: "dry-dock/c7node"
       branch: master
+
+  - name: kdb_img
+    type: image
+    versionTemplate:
+      sourceName: "pipelines-docker.jfrog.io/postgres"
 
   - name: kmicro_img
     type: image
@@ -171,6 +183,24 @@ jobs:
       script:
         - ./archiveProvisionState.sh kermit saas
         - popd
+
+  - name: db_build
+    type: runSh
+    steps:
+      - IN: db_repo
+      - IN: rt_key
+      - TASK:
+          name: db_build
+          runtime:
+            options:
+              env:
+                - IMG_OUT: "db_img"
+                - RES_REPO: "db_repo"
+                - IMG: "postgres"
+                - REL_VER: "master"
+          script:
+            - echo "Running database build"
+            - echo "RT_API_KEY"
 
   - name: kmicro_build
     type: runSh
