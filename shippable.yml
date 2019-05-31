@@ -27,6 +27,11 @@ resources:
     type: integration
     integration: aws_rc_access
 
+  # CREDS for RT instance
+  - name: rt_key
+    type: integration
+    integration: rt_key
+
   - name: kermit_repo
     type: gitRepo
     integration: "qhode_gh"
