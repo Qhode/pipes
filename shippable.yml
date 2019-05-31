@@ -206,7 +206,10 @@ jobs:
                 - REL_VER: "master"
           script:
             - echo "Running database build"
-            - echo "$RT_KEY_API_KEY"
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_key" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_key" "USER")
+            - echo "$RT_API_KEY"
+            - echo "$RT_USER"
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
       - OUT: kdb_img
