@@ -360,6 +360,7 @@ jobs:
     type: runSh
     steps:
       - IN: kermit_repo
+      - IN: rt_creds
       - IN: kermit_bits_cli
         scopes:
           - ecr
@@ -381,6 +382,15 @@ jobs:
             - docker build -t=$IMG_NAME:$REL_VER .
             - docker push $IMG_NAME:$REL_VER
             - aws ecr list-images --repository-name $IMG --query 'imageIds[?type(imageTag)!=`string`].[imageDigest]' --output text | while read line; do aws ecr batch-delete-image --repository-name $IMG --image-ids imageDigest=$line; done
+            - echo "Pushing image to Artifactory"
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
+            - RT_IMG_NAME=$(echo $IMG_NAME | cut -d'/' -f2)
+            - RT_IMG_NAME="$REGISTRY/$RT_IMG_NAME"
+            - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
+            - docker tag "$IMG_NAME:$REL_VER" "$RT_IMG_NAME:$REL_VER"
+            - docker push $RT_IMG_NAME:$REL_VER
       - OUT: kmicro_img
     on_success:
       script:
@@ -393,6 +403,7 @@ jobs:
       - IN: kermit_repo
       - IN: knodeInit_repo
       - IN: kreqKick_repo
+      - IN: rt_creds
       - IN: kermit_bits_cli
         scopes:
           - ecr
@@ -414,6 +425,15 @@ jobs:
             - docker build -t=$IMG_NAME:$REL_VER .
             - docker push $IMG_NAME:$REL_VER
             - aws ecr list-images --repository-name $IMG --query 'imageIds[?type(imageTag)!=`string`].[imageDigest]' --output text | while read line; do aws ecr batch-delete-image --repository-name $IMG --image-ids imageDigest=$line; done
+            - echo "Pushing image to Artifactory"
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
+            - RT_IMG_NAME=$(echo $IMG_NAME | cut -d'/' -f2)
+            - RT_IMG_NAME="$REGISTRY/$RT_IMG_NAME"
+            - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
+            - docker tag "$IMG_NAME:$REL_VER" "$RT_IMG_NAME:$REL_VER"
+            - docker push $RT_IMG_NAME:$REL_VER
       - OUT: kapi_img
     on_success:
       script:
@@ -424,6 +444,7 @@ jobs:
     type: runSh
     steps:
       - IN: kermit_repo
+      - IN: rt_creds
       - IN: kermit_bits_cli
         scopes:
           - ecr
@@ -445,6 +466,15 @@ jobs:
             - docker build -t=$IMG_NAME:$REL_VER .
             - docker push $IMG_NAME:$REL_VER
             - aws ecr list-images --repository-name $IMG --query 'imageIds[?type(imageTag)!=`string`].[imageDigest]' --output text | while read line; do aws ecr batch-delete-image --repository-name $IMG --image-ids imageDigest=$line; done
+            - echo "Pushing image to Artifactory"
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
+            - RT_IMG_NAME=$(echo $IMG_NAME | cut -d'/' -f2)
+            - RT_IMG_NAME="$REGISTRY/$RT_IMG_NAME"
+            - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
+            - docker tag "$IMG_NAME:$REL_VER" "$RT_IMG_NAME:$REL_VER"
+            - docker push $RT_IMG_NAME:$REL_VER
       - OUT: kwww_img
     on_success:
       script:
