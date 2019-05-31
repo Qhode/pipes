@@ -481,7 +481,7 @@ jobs:
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
-            - RT_IMG_NAME=$(echo $IMG_NAME | cut'/' -f1)
+            - RT_IMG_NAME=$(echo $IMG_NAME | cut -d'/' -f1)
             - RT_IMG_NAME="$REGISTRY/$RT_IMG_NAME"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
             - docker tag "$IMG_NAME:$REL_VER" "$RT_IMG_NAME:$REL_VER"
