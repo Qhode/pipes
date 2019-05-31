@@ -81,6 +81,26 @@ resources:
       sourceName: "dry-dock/postgres"
       branch: master
 
+  - name: kvault_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/vault"
+      branch: master
+
+  - name: kmsg_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/rabbitmq"
+      branch: master
+
+  - name: kredis_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/redis"
+
   - name: u16node_repo
     type: gitRepo
     integration: "qhode_gh"
@@ -106,6 +126,24 @@ resources:
     type: image
     versionTemplate:
       sourceName: "postgres"
+      versionName: master
+
+  - name: kvault_img
+    type: image
+    versionTemplate:
+      sourceName: "vault"
+      versionName: master
+
+  - name: kmsg_img
+    type: image
+    versionTemplate:
+      sourceName: "msg"
+      versionName: master
+
+  - name: kredis_img
+    type: image
+    versionTemplate:
+      sourceName: "redis"
       versionName: master
 
   - name: kmicro_img
@@ -217,6 +255,102 @@ jobs:
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
 
       - OUT: kdb_img
+    on_success:
+      script:
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+        - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+
+  - name: kvault_build
+    type: runSh
+    steps:
+      - IN: kvault_repo
+      - IN: rt_creds
+      - TASK:
+          name: kvault_build
+          runtime:
+            options:
+              env:
+                - IMG_OUT: "kvault_img"
+                - RES_REPO: "kvault_repo"
+                - IMG: "vault"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state "$RES_REPO")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
+            - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
+            - IMG_NAME="$REGISTRY/$IMG_NAME"
+            - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
+            - docker build -t=$IMG_NAME:$REL_VER .
+            - docker push $IMG_NAME:$REL_VER
+            - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
+
+      - OUT: kvault_img
+    on_success:
+      script:
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+        - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+
+  - name: kmsg_build
+    type: runSh
+    steps:
+      - IN: kmsg_repo
+      - IN: rt_creds
+      - TASK:
+          name: kmsg_build
+          runtime:
+            options:
+              env:
+                - IMG_OUT: "kmsg_img"
+                - RES_REPO: "kmsg_repo"
+                - IMG: "msg"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state "$RES_REPO")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
+            - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
+            - IMG_NAME="$REGISTRY/$IMG_NAME"
+            - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
+            - docker build -t=$IMG_NAME:$REL_VER .
+            - docker push $IMG_NAME:$REL_VER
+            - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
+
+      - OUT: kmsg_img
+    on_success:
+      script:
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+        - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+
+  - name: kredis_build
+    type: runSh
+    steps:
+      - IN: kredis_repo
+      - IN: rt_creds
+      - TASK:
+          name: kredis_build
+          runtime:
+            options:
+              env:
+                - IMG_OUT: "kredis_img"
+                - RES_REPO: "kredis_repo"
+                - IMG: "redis"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state "$RES_REPO")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
+            - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
+            - IMG_NAME="$REGISTRY/$IMG_NAME"
+            - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
+            - docker build -t=$IMG_NAME:$REL_VER .
+            - docker push $IMG_NAME:$REL_VER
+            - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
+
+      - OUT: kredis_img
     on_success:
       script:
         - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
