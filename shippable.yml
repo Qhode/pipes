@@ -244,7 +244,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
-            - IMG_NAME="$REGISTRY/$IMG_NAME"
+            - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
             - docker build -t=$IMG_NAME:$REL_VER .
             - docker push $IMG_NAME:$REL_VER
@@ -276,7 +276,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
-            - IMG_NAME="$REGISTRY/$IMG_NAME"
+            - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
             - docker build -t=$IMG_NAME:$REL_VER .
             - docker push $IMG_NAME:$REL_VER
@@ -308,7 +308,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
-            - IMG_NAME="$REGISTRY/$IMG_NAME"
+            - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
             - docker build -t=$IMG_NAME:$REL_VER .
             - docker push $IMG_NAME:$REL_VER
@@ -340,7 +340,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
-            - IMG_NAME="$REGISTRY/$IMG_NAME"
+            - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
             - docker build -t=$IMG_NAME:$REL_VER .
             - docker push $IMG_NAME:$REL_VER
@@ -378,12 +378,12 @@ jobs:
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
-            - IMG_NAME="$RT_REGISTRY/$IMG_NAME:$REL_VER"
-            - echo "Building $IMG_NAME"
-            - docker build -t=$IMG_NAME .
-            - echo "Pushing $IMG_NAME to Artifactory"
+            - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
+            - echo "Building $IMG_NAME:$REL_VER"
+            - docker build -t=$IMG_NAME:$REL_VER .
+            - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
-            - docker push $IMG_NAME
+            - docker push $IMG_NAME:$REL_VER
       - OUT: kmicro_img
     on_success:
       script:
@@ -418,12 +418,12 @@ jobs:
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
-            - IMG_NAME="$RT_REGISTRY/$IMG_NAME:$REL_VER"
-            - echo "Building $IMG_NAME"
-            - docker build -t=$IMG_NAME .
-            - echo "Pushing $IMG_NAME to Artifactory"
+            - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
+            - echo "Building $IMG_NAME:$REL_VER"
+            - docker build -t=$IMG_NAME:$REL_VER .
+            - echo "Pushing $IMG_NAME;$REL_VER to Artifactory"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
-            - docker push $IMG_NAME
+            - docker push $IMG_NAME:$REL_VER
       - OUT: kapi_img
     on_success:
       script:
@@ -456,12 +456,12 @@ jobs:
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
-            - IMG_NAME="$RT_REGISTRY/$IMG_NAME:$REL_VER"
-            - echo "Building $IMG_NAME"
-            - docker build -t=$IMG_NAME .
-            - echo "Pushing $IMG_NAME to Artifactory"
+            - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
+            - echo "Building $IMG_NAME:$REL_VER"
+            - docker build -t=$IMG_NAME:$REL_VER .
+            - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
-            - docker push $IMG_NAME
+            - docker push $IMG_NAME:$REL_VER
       - OUT: kwww_img
     on_success:
       script:
@@ -494,12 +494,12 @@ jobs:
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
-            - IMG_NAME="$RT_REGISTRY/$IMG_NAME:$REL_VER"
-            - echo "Building $IMG_NAME"
-            - docker build -t=$IMG_NAME -f build/docker/Dockerfile.Ubuntu .
-            - echo "Pushing $IMG_NAME to Artifactory"
+            - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
+            - echo "Building $IMG_NAME:$REL_VER"
+            - docker build -t=$IMG_NAME:$REL_VER -f build/docker/Dockerfile.Ubuntu .
+            - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
-            - docker push $IMG_NAME
+            - docker push $IMG_NAME:$REL_VER
             - popd
             - echo "----------- Pushing tarfile to Artifactory ----------"
             - RIBBIT_REPO_DIR=$(shipctl get_resource_state "$RES_REPO")
@@ -522,6 +522,7 @@ jobs:
       - IN: kwww_img
       - IN: kapi_img
       - IN: kmicro_img
+      - IN: rt_creds
       - IN: kermit_bits_cli
         scopes:
           - ecr
