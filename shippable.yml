@@ -357,9 +357,6 @@ jobs:
     steps:
       - IN: kermit_repo
       - IN: rt_creds
-      - IN: kermit_bits_cli
-        scopes:
-          - ecr
         switch: off
       - TASK:
           name: micro_build
@@ -397,9 +394,6 @@ jobs:
       - IN: knodeInit_repo
       - IN: kreqKick_repo
       - IN: rt_creds
-      - IN: kermit_bits_cli
-        scopes:
-          - ecr
         switch: off
       - TASK:
           name: kapi_build
@@ -435,9 +429,6 @@ jobs:
     steps:
       - IN: kermit_repo
       - IN: rt_creds
-      - IN: kermit_bits_cli
-        scopes:
-          - ecr
         switch: off
       - TASK:
           name: kwww_build
@@ -473,9 +464,6 @@ jobs:
     steps:
       - IN: ribbit_repo
       - IN: rt_creds
-      - IN: kermit_bits_cli
-        scopes:
-          - ecr
         switch: off
       - TASK:
           name: kribbit_build
@@ -524,9 +512,6 @@ jobs:
       - IN: kapi_img
       - IN: kmicro_img
       - IN: rt_creds
-      - IN: kermit_bits_cli
-        scopes:
-          - ecr
         switch: off
       - IN: pipes_repo
         switch: off
