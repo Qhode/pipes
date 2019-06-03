@@ -53,9 +53,6 @@ pull_ribbit_repo() {
 
 pull_images() {
   echo "Pulling images to deploy for $DEPLOY_VERSION to OneBox"
-  echo "AWS login has occurred, will need to change once we move to artifactory"
-  _exec_cmd "sudo $(aws ecr get-login --no-include-email --region us-east-1)"
-  echo "--------------------------------------"
 
   _exec_cmd "sudo docker pull $KRIBBIT_IMG:$DEPLOY_VERSION"
   _exec_cmd "sudo docker pull $KWWW_IMG:$DEPLOY_VERSION"
