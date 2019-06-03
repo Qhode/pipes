@@ -148,30 +148,26 @@ resources:
 
   - name: kmicro_img
     type: image
-    integration: aws_bits_access
     versionTemplate:
-      sourceName: "374168611083.dkr.ecr.us-east-1.amazonaws.com/kmicro"
+      sourceName: "kmicro"
       versionName: master
 
   - name: kapi_img
     type: image
-    integration: aws_bits_access
     versionTemplate:
-      sourceName: "374168611083.dkr.ecr.us-east-1.amazonaws.com/kapi"
+      sourceName: "kapi"
       versionName: master
 
   - name: kwww_img
     type: image
-    integration: aws_bits_access
     versionTemplate:
-      sourceName: "374168611083.dkr.ecr.us-east-1.amazonaws.com/kwww"
+      sourceName: "kwww"
       versionName: master
 
   - name: kribbit_img
     type: image
-    integration: aws_bits_access
     versionTemplate:
-      sourceName: "374168611083.dkr.ecr.us-east-1.amazonaws.com/kribbit"
+      sourceName: "kribbit"
       versionName: master
 
   - name: kreqProc_img
@@ -379,18 +375,15 @@ jobs:
             - pushd $(shipctl get_resource_state "$RES_REPO")
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
-            - docker build -t=$IMG_NAME:$REL_VER .
-            - docker push $IMG_NAME:$REL_VER
-            - aws ecr list-images --repository-name $IMG --query 'imageIds[?type(imageTag)!=`string`].[imageDigest]' --output text | while read line; do aws ecr batch-delete-image --repository-name $IMG --image-ids imageDigest=$line; done
-            - echo "Pushing image to Artifactory"
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
-            - RT_IMG_NAME=$(echo $IMG_NAME | cut -d'/' -f2)
-            - RT_IMG_NAME="$REGISTRY/$RT_IMG_NAME"
+            - IMG_NAME="$RT_REGISTRY/$IMG_NAME:$REL_VER"
+            - echo "Building $IMG_NAME"
+            - docker build -t=$IMG_NAME .
+            - echo "Pushing $IMG_NAME to Artifactory"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
-            - docker tag "$IMG_NAME:$REL_VER" "$RT_IMG_NAME:$REL_VER"
-            - docker push $RT_IMG_NAME:$REL_VER
+            - docker push $IMG_NAME
       - OUT: kmicro_img
     on_success:
       script:
@@ -422,18 +415,15 @@ jobs:
             - pushd $(shipctl get_resource_state "$RES_REPO")/nod/api
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
-            - docker build -t=$IMG_NAME:$REL_VER .
-            - docker push $IMG_NAME:$REL_VER
-            - aws ecr list-images --repository-name $IMG --query 'imageIds[?type(imageTag)!=`string`].[imageDigest]' --output text | while read line; do aws ecr batch-delete-image --repository-name $IMG --image-ids imageDigest=$line; done
-            - echo "Pushing image to Artifactory"
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
-            - RT_IMG_NAME=$(echo $IMG_NAME | cut -d'/' -f2)
-            - RT_IMG_NAME="$REGISTRY/$RT_IMG_NAME"
+            - IMG_NAME="$RT_REGISTRY/$IMG_NAME:$REL_VER"
+            - echo "Building $IMG_NAME"
+            - docker build -t=$IMG_NAME .
+            - echo "Pushing $IMG_NAME to Artifactory"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
-            - docker tag "$IMG_NAME:$REL_VER" "$RT_IMG_NAME:$REL_VER"
-            - docker push $RT_IMG_NAME:$REL_VER
+            - docker push $IMG_NAME
       - OUT: kapi_img
     on_success:
       script:
@@ -463,18 +453,15 @@ jobs:
             - pushd $(shipctl get_resource_state "$RES_REPO")/nod/www
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
-            - docker build -t=$IMG_NAME:$REL_VER .
-            - docker push $IMG_NAME:$REL_VER
-            - aws ecr list-images --repository-name $IMG --query 'imageIds[?type(imageTag)!=`string`].[imageDigest]' --output text | while read line; do aws ecr batch-delete-image --repository-name $IMG --image-ids imageDigest=$line; done
-            - echo "Pushing image to Artifactory"
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
-            - RT_IMG_NAME=$(echo $IMG_NAME | cut -d'/' -f2)
-            - RT_IMG_NAME="$REGISTRY/$RT_IMG_NAME"
+            - IMG_NAME="$RT_REGISTRY/$IMG_NAME:$REL_VER"
+            - echo "Building $IMG_NAME"
+            - docker build -t=$IMG_NAME .
+            - echo "Pushing $IMG_NAME to Artifactory"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
-            - docker tag "$IMG_NAME:$REL_VER" "$RT_IMG_NAME:$REL_VER"
-            - docker push $RT_IMG_NAME:$REL_VER
+            - docker push $IMG_NAME
       - OUT: kwww_img
     on_success:
       script:
@@ -504,19 +491,15 @@ jobs:
             - pushd $(shipctl get_resource_state "$RES_REPO")
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
-            - docker build -t=$IMG_NAME:$REL_VER -f build/docker/Dockerfile.Ubuntu .
-            - docker push $IMG_NAME:$REL_VER
-            - aws ecr list-images --repository-name $IMG --query 'imageIds[?type(imageTag)!=`string`].[imageDigest]' --output text | while read line; do aws ecr batch-delete-image --repository-name $IMG --image-ids imageDigest=$line; done
-            - echo "----------- Pushing image to Artifactory ----------"
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
-            - RT_BUCKET=$(shipctl get_integration_resource_field "rt_creds" "BUCKET")
-            - RT_IMG_NAME=$(echo $IMG_NAME | cut -d'/' -f2)
-            - RT_IMG_NAME="$REGISTRY/$RT_IMG_NAME"
+            - IMG_NAME="$RT_REGISTRY/$IMG_NAME:$REL_VER"
+            - echo "Building $IMG_NAME"
+            - docker build -t=$IMG_NAME -f build/docker/Dockerfile.Ubuntu .
+            - echo "Pushing $IMG_NAME to Artifactory"
             - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
-            - docker tag "$IMG_NAME:$REL_VER" "$RT_IMG_NAME:$REL_VER"
-            - docker push $RT_IMG_NAME:$REL_VER
+            - docker push $IMG_NAME
             - popd
             - echo "----------- Pushing tarfile to Artifactory ----------"
             - RIBBIT_REPO_DIR=$(shipctl get_resource_state "$RES_REPO")
