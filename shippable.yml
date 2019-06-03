@@ -505,6 +505,7 @@ jobs:
             - RIBBIT_REPO_DIR=$(shipctl get_resource_state "$RES_REPO")
             - TAR_FILENAME="pipelines-$REL_VER.tar.gz"
             - tar -zcf "$TAR_FILENAME" -C "$RIBBIT_REPO_DIR" .
+            - RT_BUCKET=$(shipctl get_integration_resource_field "rt_creds" "BUCKET")
             - curl -T $TAR_FILENAME $RT_BUCKET -u$RT_USER:$RT_API_KEY
       - OUT: kribbit_img
     on_success:
