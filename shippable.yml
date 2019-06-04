@@ -476,6 +476,13 @@ jobs:
                 - REL_VER: "master"
 
           script:
+            - echo "------------ Installing Jfrog CLI ----------------"
+            - JFROG_VERSION=1.25.0
+            - wget -nv https://api.bintray.com/content/jfrog/jfrog-cli-go/"$JFROG_VERSION"/jfrog-cli-linux-amd64/jfrog?bt_package=jfrog-cli-linux-amd64 -O jfrog
+            - chmod +x jfrog
+            - mv jfrog /usr/bin/jfrog
+            - jfrog --version
+            - echo "------------- Installed Jfrog CLI -----------------"
             - pushd $(shipctl get_resource_state "$RES_REPO")
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
