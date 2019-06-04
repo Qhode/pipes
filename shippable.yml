@@ -480,24 +480,24 @@ jobs:
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
             - echo "Building $IMG_NAME:$REL_VER"
             - docker build -t=$IMG_NAME:$REL_VER -f build/docker/Dockerfile.Ubuntu .
             - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
-            - jfrog rt config --url $RT_REGISTRY --user $RT_USER --apikey $RT_API_KEY --interactive=false
-              #- docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
+            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $IMG_NAME:$REL_VER --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
             - jfrog rt bag $JOB_NAME $BUILD_NUMBER
             - popd
             - echo "----------- Pushing tarfile to Artifactory ----------"
-            - RIBBIT_REPO_DIR=$(shipctl get_resource_state "$RES_REPO")
+            - RT_BUCKET=$(shipctl get_integration_resource_field "rt_creds" "BUCKET")
+            - RT_BUCKET="$RT_REGISTRY/$RT_BUCKET"
             - TAR_FILENAME="pipelines-$REL_VER.tar.gz"
+            - RIBBIT_REPO_DIR=$(shipctl get_resource_state "$RES_REPO")
             - tar -zcf "$TAR_FILENAME" -C "$RIBBIT_REPO_DIR" .
             - jfrog rt u "$TAR_FILENAME" "$RT_BUCKET" --build-name="$JOB_NAME" --build-number="$BUILD_NUMBER"
-              #- RT_BUCKET=$(shipctl get_integration_resource_field "rt_creds" "BUCKET")
-              #- curl -T $TAR_FILENAME $RT_BUCKET -u$RT_USER:$RT_API_KEY
       - OUT: kribbit_img
     on_success:
       script:
