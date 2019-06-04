@@ -490,12 +490,13 @@ jobs:
             - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
+            - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
             - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
             - echo "Building $IMG_NAME:$REL_VER"
             - docker build -t=$IMG_NAME:$REL_VER -f build/docker/Dockerfile.Ubuntu .
             - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
-            - jfrog rt docker-push $IMG_NAME:$REL_VER $RT_REGISTRY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
+            - jfrog rt docker-push $IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
             - jfrog rt bag $JOB_NAME $BUILD_NUMBER
             - popd
             - echo "----------- Pushing tarfile to Artifactory ----------"
