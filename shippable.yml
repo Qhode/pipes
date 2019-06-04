@@ -486,20 +486,25 @@ jobs:
             - echo "Building $IMG_NAME:$REL_VER"
             - docker build -t=$IMG_NAME:$REL_VER -f build/docker/Dockerfile.Ubuntu .
             - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
-            - docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
-            - docker push $IMG_NAME:$REL_VER
+            - jfrog rt config --url $RT_REGISTRY --user $RT_USER --apikey $RT_API_KEY --interactive=false
+              #- docker login $RT_REGISTRY -u $RT_USER -p $RT_API_KEY
+            - jfrog rt docker-push $IMG_NAME:$REL_VER --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
+            - jfrog rt bag $JOB_NAME $BUILD_NUMBER
             - popd
             - echo "----------- Pushing tarfile to Artifactory ----------"
             - RIBBIT_REPO_DIR=$(shipctl get_resource_state "$RES_REPO")
             - TAR_FILENAME="pipelines-$REL_VER.tar.gz"
             - tar -zcf "$TAR_FILENAME" -C "$RIBBIT_REPO_DIR" .
-            - RT_BUCKET=$(shipctl get_integration_resource_field "rt_creds" "BUCKET")
-            - curl -T $TAR_FILENAME $RT_BUCKET -u$RT_USER:$RT_API_KEY
+            - jfrog rt u "$TAR_FILENAME" "$RT_BUCKET" --build-name="$JOB_NAME" --build-number="$BUILD_NUMBER"
+              #- RT_BUCKET=$(shipctl get_integration_resource_field "rt_creds" "BUCKET")
+              #- curl -T $TAR_FILENAME $RT_BUCKET -u$RT_USER:$RT_API_KEY
       - OUT: kribbit_img
     on_success:
       script:
         - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
         - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+        - echo "Publishing build info"
+        - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
 
   - name: kermit_deploy
     type: runSh
