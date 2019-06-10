@@ -122,6 +122,27 @@ resources:
       sourceName: "dry-dock/c7node"
       branch: master
 
+  - name: u16go_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/u16go"
+      branch: master
+
+  - name: u16cpp_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/u16cpp"
+      branch: master
+
+  - name: u16java_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/u16java"
+      branch: master
+
   - name: kdb_img
     type: image
     versionTemplate:
@@ -742,3 +763,61 @@ jobs:
             - pushd $(shipctl get_resource_state c7node_repo)
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
             - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+
+  - name: u16go_x8664_build
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: u16go_repo
+      - IN: drydock_cli
+      - TASK:
+          name: u16go_build
+          runtime:
+            options:
+              env:
+                - IMG_REPO_NAME: "drydock"
+                - IMG_NAME: "u16go"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state u16go_repo)
+            - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+
+  - name: u16cpp_x8664_build
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: u16cpp_repo
+      - IN: drydock_cli
+      - TASK:
+          name: u16cpp_build
+          runtime:
+            options:
+              env:
+                - IMG_REPO_NAME: "drydock"
+                - IMG_NAME: "u16cpp"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state u16cpp_repo)
+            - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+
+  - name: u16java_x8664_build
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: u16java_repo
+      - IN: drydock_cli
+      - TASK:
+          name: u16java_build
+          runtime:
+            options:
+              env:
+                - IMG_REPO_NAME: "drydock"
+                - IMG_NAME: "u16java"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state u16java_repo)
+            - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+          
