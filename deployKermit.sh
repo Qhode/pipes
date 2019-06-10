@@ -47,8 +47,8 @@ configure_ssh_creds() {
   popd
 }
 
-pull_ribbit_repo() {
-  _exec_cmd "git -C /home/centos/ribbit pull origin master"
+pull_installer_repo() {
+  _exec_cmd "git -C /home/centos/installer pull origin master"
 }
 
 pull_images() {
@@ -95,7 +95,7 @@ main() {
   eval $(ssh-agent -s)
   set_context
   configure_ssh_creds
-  pull_ribbit_repo
+  pull_installer_repo
   pull_images
   temp_tag
   update_creds
