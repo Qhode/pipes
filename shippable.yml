@@ -121,6 +121,27 @@ resources:
     pointer:
       sourceName: "dry-dock/c7node"
       branch: master
+      
+  - name: c7go_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/c7go"
+      branch: master
+
+  - name: c7cpp_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/c7cpp"
+      branch: master
+
+  - name: c7java_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/c7java"
+      branch: master     
 
   - name: u16go_repo
     type: gitRepo
@@ -763,6 +784,63 @@ jobs:
             - pushd $(shipctl get_resource_state c7node_repo)
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
             - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+            
+  - name: c7go_x8664_build
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: c7go_repo
+      - IN: drydock_cli
+      - TASK:
+          name: c7go_build
+          runtime:
+            options:
+              env:
+                - IMG_REPO_NAME: "drydock"
+                - IMG_NAME: "c7go"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state c7go_repo)
+            - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+
+  - name: c7cpp_x8664_build
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: c7cpp_repo
+      - IN: drydock_cli
+      - TASK:
+          name: c7cpp_build
+          runtime:
+            options:
+              env:
+                - IMG_REPO_NAME: "drydock"
+                - IMG_NAME: "c7cpp"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state c7cpp_repo)
+            - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+
+  - name: c7java_x8664_build
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: c7java_repo
+      - IN: drydock_cli
+      - TASK:
+          name: c7java_build
+          runtime:
+            options:
+              env:
+                - IMG_REPO_NAME: "drydock"
+                - IMG_NAME: "c7java"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state c7java_repo)
+            - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER           
 
   - name: u16go_x8664_build
     type: runSh
