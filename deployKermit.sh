@@ -78,7 +78,7 @@ deploy() {
   echo "Deploying the release $DEPLOY_VERSION to OneBox"
   echo "--------------------------------------"
 
-  _exec_cmd "sudo /home/centos/ribbit/ribbit upgrade"
+  _exec_cmd "sudo /home/centos/installer/pipelines upgrade"
 
   echo "--------------------------------------"
   echo "Successfully deployed release $DEPLOY_VERSION to Onebox env"
