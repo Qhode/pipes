@@ -595,7 +595,7 @@ jobs:
             - jfrog rt docker-push $IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
             - echo "----------- Pushing image to installer repo ---------"
             - docker tag $IMG_NAME:$REL_VER $RT_REGISTRY/installer:$REL_VER
-            - jfrog rt docker-push $RT_REGISTRY/installer::$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
+            - jfrog rt docker-push $RT_REGISTRY/installer:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
             - echo "----------- Gathering build info --------------------"
             - jfrog rt bag $JOB_NAME $BUILD_NUMBER
             - popd
