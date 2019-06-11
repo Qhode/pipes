@@ -39,7 +39,7 @@ resources:
       sourceName: "Shippable/kermit"
       branch: master
 
-  - name: ribbit_repo
+  - name: installer_repo
     type: gitRepo
     integration: "qhode_gh"
     pointer:
@@ -227,7 +227,7 @@ resources:
       sourceName: "jfrog/pipelines-www"
       versionName: master
 
-  - name: kribbit_img
+  - name: installer_img
     type: image
     versionTemplate:
       sourceName: "jfrog/pipelines-installer"
@@ -562,20 +562,20 @@ jobs:
         - echo "Publishing build info"
         - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
 
-  - name: kribbit_build
+  - name: installer_build
     type: runSh
     steps:
-      - IN: ribbit_repo
+      - IN: installer_repo
       - IN: rt_creds
         switch: off
       - TASK:
-          name: kribbit_build
+          name: installer_build
           runtime:
             options:
               env:
-                - IMG_OUT: "kribbit_img"
-                - RES_REPO: "ribbit_repo"
-                - IMG: "kribbit"
+                - IMG_OUT: "installer_img"
+                - RES_REPO: "installer_repo"
+                - IMG: "installer"
                 - REL_VER: "master"
 
           script:
@@ -602,10 +602,10 @@ jobs:
             - echo "----------- Pushing tarfile to Artifactory ----------"
             - RT_BUCKET=$(shipctl get_integration_resource_field "rt_creds" "BUCKET")
             - TAR_FILENAME="pipelines-$REL_VER.tar.gz"
-            - RIBBIT_REPO_DIR=$(shipctl get_resource_state "$RES_REPO")
-            - tar -zcf "$TAR_FILENAME" -C "$RIBBIT_REPO_DIR" .
+            - INSTALLER_REPO_DIR=$(shipctl get_resource_state "$RES_REPO")
+            - tar -zcf "$TAR_FILENAME" -C "$INSTALLER_REPO_DIR" .
             - jfrog rt u "$TAR_FILENAME" "$RT_BUCKET" --build-name="$JOB_NAME" --build-number="$BUILD_NUMBER"
-      - OUT: kribbit_img
+      - OUT: installer_img
     on_success:
       script:
         - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
@@ -619,7 +619,7 @@ jobs:
     runtime:
       timeoutMinutes: 15
     steps:
-      - IN: kribbit_img
+      - IN: installer_img
       - IN: kwww_img
       - IN: kapi_img
       - IN: kmicro_img
@@ -643,7 +643,7 @@ jobs:
           script:
             - export BASTION_IP=$(shipctl get_resource_version_key kermit_saas_state nat_pub_ip)
             - export ONEBOX_IP=$(shipctl get_resource_version_key kermit_saas_state onebox_priv_ip)
-            - export KRIBBIT_IMG=$(shipctl get_resource_version_key kribbit_img IMG_NAME)
+            - export INSTALLER_IMG=$(shipctl get_resource_version_key installer_img IMG_NAME)
             - export KWWW_IMG=$(shipctl get_resource_version_key kwww_img IMG_NAME)
             - export KAPI_IMG=$(shipctl get_resource_version_key kapi_img IMG_NAME)
             - export KMICRO_IMG=$(shipctl get_resource_version_key kmicro_img IMG_NAME)

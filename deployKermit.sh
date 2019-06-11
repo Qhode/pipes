@@ -54,18 +54,11 @@ pull_installer_repo() {
 pull_images() {
   echo "Pulling images to deploy for $DEPLOY_VERSION to OneBox"
 
-  _exec_cmd "sudo docker pull $KRIBBIT_IMG:$DEPLOY_VERSION"
+  _exec_cmd "sudo docker pull $INSTALLER_IMG:$DEPLOY_VERSION"
   _exec_cmd "sudo docker pull $KWWW_IMG:$DEPLOY_VERSION"
   _exec_cmd "sudo docker pull $KAPI_IMG:$DEPLOY_VERSION"
   _exec_cmd "sudo docker pull $KMICRO_IMG:$DEPLOY_VERSION"
 
-}
-
-temp_tag(){
-  _exec_cmd "sudo docker tag $KRIBBIT_IMG:$DEPLOY_VERSION drydock/ribbit:$DEPLOY_VERSION"
-  _exec_cmd "sudo docker tag $KWWW_IMG:$DEPLOY_VERSION drydock/www:$DEPLOY_VERSION"
-  _exec_cmd "sudo docker tag $KAPI_IMG:$DEPLOY_VERSION drydock/api:$DEPLOY_VERSION"
-  _exec_cmd "sudo docker tag $KMICRO_IMG:$DEPLOY_VERSION drydock/kmicro:$DEPLOY_VERSION"
 }
 
 update_creds(){
@@ -97,7 +90,6 @@ main() {
   configure_ssh_creds
   pull_installer_repo
   pull_images
-  temp_tag
   update_creds
   deploy
 #  create_version
