@@ -647,6 +647,9 @@ jobs:
             - export KWWW_IMG=$(shipctl get_resource_version_key kwww_img IMG_NAME)
             - export KAPI_IMG=$(shipctl get_resource_version_key kapi_img IMG_NAME)
             - export KMICRO_IMG=$(shipctl get_resource_version_key kmicro_img IMG_NAME)
+            - export RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
+            - export RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - export RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - pushd $(shipctl get_resource_state "pipes_repo")
             - ./deployKermit.sh
             - popd
