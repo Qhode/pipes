@@ -164,6 +164,27 @@ resources:
       sourceName: "dry-dock/u16java"
       branch: master
 
+  - name: u18go_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/u18go"
+      branch: master
+
+  - name: u18cpp_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/u18cpp"
+      branch: master
+
+  - name: u18java_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/u18java"
+      branch: master
+
   - name: kdb_img
     type: image
     versionTemplate:
