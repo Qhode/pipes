@@ -747,6 +747,63 @@ jobs:
       script:
         - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "TAG_VER=$TAG_VER" "FILE_REPO_COMMIT_SHA=$REPO_COMMIT" "WEB_URL=$WEB_URL" "S3_URL=$S3_URL" "TAR_FILENAME=$TAR_FILENAME" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS"
 
+  - name: u18cpp_x8664_build
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: u18cpp_repo
+      - IN: drydock_cli
+      - TASK:
+          name: u18cpp_build
+          runtime:
+            options:
+              env:
+                - IMG_REPO_NAME: "drydock"
+                - IMG_NAME: "u18cpp"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state u18cpp_repo)
+            - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+
+  - name: u18go_x8664_build
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: u18go_repo
+      - IN: drydock_cli
+      - TASK:
+          name: u18go_build
+          runtime:
+            options:
+              env:
+                - IMG_REPO_NAME: "drydock"
+                - IMG_NAME: "u18go"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state u18go_repo)
+            - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+
+  - name: u18java_x8664_build
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: u18java_repo
+      - IN: drydock_cli
+      - TASK:
+          name: u18java_build
+          runtime:
+            options:
+              env:
+                - IMG_REPO_NAME: "drydock"
+                - IMG_NAME: "u18java"
+                - REL_VER: "master"
+          script:
+            - pushd $(shipctl get_resource_state u18java_repo)
+            - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER   
+
   - name: u18node_x8664_build
     type: runSh
     dependencyMode: strict
@@ -764,7 +821,7 @@ jobs:
           script:
             - pushd $(shipctl get_resource_state u18node_repo)
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
-            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER  
 
   - name: c7node_x8664_build
     type: runSh
