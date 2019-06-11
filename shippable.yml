@@ -121,7 +121,7 @@ resources:
     pointer:
       sourceName: "dry-dock/c7node"
       branch: master
-      
+
   - name: c7go_repo
     type: gitRepo
     integration: "qhode_gh"
@@ -141,7 +141,7 @@ resources:
     integration: "qhode_gh"
     pointer:
       sourceName: "dry-dock/c7java"
-      branch: master     
+      branch: master
 
   - name: u16go_repo
     type: gitRepo
@@ -593,6 +593,10 @@ jobs:
             - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
+            - echo "----------- Pushing image to installer repo ---------"
+            - docker tag $IMG_NAME:$REL_VER $RT_REGISTRY/installer:$REL_VER
+            - jfrog rt docker-push $RT_REGISTRY/installer::$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
+            - echo "----------- Gathering build info --------------------"
             - jfrog rt bag $JOB_NAME $BUILD_NUMBER
             - popd
             - echo "----------- Pushing tarfile to Artifactory ----------"
@@ -823,7 +827,7 @@ jobs:
           script:
             - pushd $(shipctl get_resource_state u18java_repo)
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
-            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER   
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
 
   - name: u18node_x8664_build
     type: runSh
@@ -842,7 +846,7 @@ jobs:
           script:
             - pushd $(shipctl get_resource_state u18node_repo)
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
-            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER  
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
 
   - name: c7node_x8664_build
     type: runSh
@@ -862,7 +866,7 @@ jobs:
             - pushd $(shipctl get_resource_state c7node_repo)
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
             - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
-            
+
   - name: c7go_x8664_build
     type: runSh
     dependencyMode: strict
@@ -918,7 +922,7 @@ jobs:
           script:
             - pushd $(shipctl get_resource_state c7java_repo)
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
-            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER           
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
 
   - name: u16go_x8664_build
     type: runSh
@@ -976,4 +980,4 @@ jobs:
             - pushd $(shipctl get_resource_state u16java_repo)
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
             - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
-          
+
