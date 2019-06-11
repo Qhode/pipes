@@ -212,25 +212,25 @@ resources:
   - name: kmicro_img
     type: image
     versionTemplate:
-      sourceName: "kmicro"
+      sourceName: "jfrog/pipelines-micro"
       versionName: master
 
   - name: kapi_img
     type: image
     versionTemplate:
-      sourceName: "kapi"
+      sourceName: "jfrog/pipelines-api"
       versionName: master
 
   - name: kwww_img
     type: image
     versionTemplate:
-      sourceName: "kwww"
+      sourceName: "jfrog/pipelines-www"
       versionName: master
 
   - name: kribbit_img
     type: image
     versionTemplate:
-      sourceName: "kribbit"
+      sourceName: "jfrog/pipelines-installer"
       versionName: master
 
   - name: kreqProc_img
