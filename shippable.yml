@@ -188,25 +188,25 @@ resources:
   - name: kdb_img
     type: image
     versionTemplate:
-      sourceName: "postgres"
+      sourceName: "jfrog/pipelines-postgres"
       versionName: master
 
   - name: kvault_img
     type: image
     versionTemplate:
-      sourceName: "vault"
+      sourceName: "jfrog/pipelines-vault"
       versionName: master
 
   - name: kmsg_img
     type: image
     versionTemplate:
-      sourceName: "msg"
+      sourceName: "jfrog/pipelines-msg"
       versionName: master
 
   - name: kredis_img
     type: image
     versionTemplate:
-      sourceName: "redis"
+      sourceName: "jfrog/pipelines-redis"
       versionName: master
 
   - name: kmicro_img
