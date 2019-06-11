@@ -48,11 +48,7 @@ configure_ssh_creds() {
 }
 
 pull_installer_repo() {
-  #_exec_cmd "git -C /home/centos/installer pull origin master"
-  local installer_path="$RT_URL/pipelines-installers/installer/pipelines-master.tar.gz"
-  local installer_tar="/home/centos/installer.tar.gz"
-  _exec_cmd "curl -u$RT_USER:$RT_API_KEY -XGET $installer_path > $installer_tar"
-  _exec_cmd "mkdir -p /home/centos/installer && tar -C /home/centos/installer -xvzf $installer_tar"
+  _exec_cmd "git -C /home/centos/installer pull origin master"
 }
 
 pull_images() {
