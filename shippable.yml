@@ -777,6 +777,8 @@ jobs:
     steps:
       - IN: u18cpp_repo
       - IN: drydock_cli
+      - IN: rt_creds
+        switch: off
       - TASK:
           name: u18cpp_build
           runtime:
@@ -789,6 +791,21 @@ jobs:
             - pushd $(shipctl get_resource_state u18cpp_repo)
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
             - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+            - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
+            - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
+            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
+            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
+            - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
+            - jfrog rt bag $JOB_NAME $BUILD_NUMBER
+            - popd
+    on_success:
+      script:
+        - echo "Publishing build info"
+        - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
 
   - name: u18go_x8664_build
     type: runSh
@@ -796,6 +813,8 @@ jobs:
     steps:
       - IN: u18go_repo
       - IN: drydock_cli
+      - IN: rt_creds
+        switch: off
       - TASK:
           name: u18go_build
           runtime:
@@ -808,6 +827,21 @@ jobs:
             - pushd $(shipctl get_resource_state u18go_repo)
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
             - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+            - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
+            - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
+            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
+            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
+            - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
+            - jfrog rt bag $JOB_NAME $BUILD_NUMBER
+            - popd
+    on_success:
+      script:
+        - echo "Publishing build info"
+        - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
 
   - name: u18java_x8664_build
     type: runSh
@@ -815,6 +849,8 @@ jobs:
     steps:
       - IN: u18java_repo
       - IN: drydock_cli
+      - IN: rt_creds
+        switch: off
       - TASK:
           name: u18java_build
           runtime:
@@ -827,6 +863,21 @@ jobs:
             - pushd $(shipctl get_resource_state u18java_repo)
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
             - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+            - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
+            - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
+            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
+            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
+            - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
+            - jfrog rt bag $JOB_NAME $BUILD_NUMBER
+            - popd
+    on_success:
+      script:
+        - echo "Publishing build info"
+        - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
 
   - name: u18node_x8664_build
     type: runSh
@@ -834,6 +885,8 @@ jobs:
     steps:
       - IN: u18node_repo
       - IN: drydock_cli
+      - IN: rt_creds
+        switch: off
       - TASK:
           name: u18node_build
           runtime:
@@ -846,6 +899,21 @@ jobs:
             - pushd $(shipctl get_resource_state u18node_repo)
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
             - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+            - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
+            - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
+            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
+            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
+            - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
+            - jfrog rt bag $JOB_NAME $BUILD_NUMBER
+            - popd
+    on_success:
+      script:
+        - echo "Publishing build info"
+        - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
 
   - name: c7node_x8664_build
     type: runSh
