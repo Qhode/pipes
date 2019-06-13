@@ -260,6 +260,32 @@ resources:
         SECURITY_GROUP_ID: "sg-f634518c"
         REGION: "us-east-1"
 
+  - name: distrobase_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/distrobase"
+      branch: master
+
+  - name: u16microbase_repo
+    type: gitRepo
+    integration: "qhode_gh"
+    pointer:
+      sourceName: "dry-dock/u16microbase"
+      branch: master
+
+  - name: distrobase_img
+    type: image
+    versionTemplate:
+      sourceName: "pipelines-docker.jfrog.io/pipelines-distrobase"
+      versionName: master
+
+  - name: u16microbase_img
+    type: image
+    versionTemplate:
+      sourceName: "pipelines-docker.jfrog.io/pipelines-u16microbase"
+      versionName: master
+
 jobs:
   - name: kermit_prov
     type: runSh
@@ -1217,5 +1243,83 @@ jobs:
             - popd
     on_success:
       script:
+        - echo "Publishing build info"
+        - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
+
+  - name: distrobase_build
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: distrobase_repo
+      - IN: drydock_cli
+      - IN: rt_creds
+        switch: off
+      - TASK:
+          name: distrobase_build
+          runtime:
+            options:
+              env:
+                - IMG_REPO_NAME: "drydock"
+                - IMG_NAME: "distrobase"
+                - REL_VER: "master"
+                - IMG_JFROG_OUT: "distrobase_img"
+          script:
+            - pushd $(shipctl get_resource_state distrobase_repo)
+            - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
+            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+            - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
+            - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
+            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
+            - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
+            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
+            - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
+            - jfrog rt bag $JOB_NAME $BUILD_NUMBER
+            - popd
+      - OUT: distrobase_img
+    on_success:
+      script:
+        - shipctl put_resource_state_multi $IMG_JFROG_OUT "versionName=$REL_VER" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+        - echo "Publishing build info"
+        - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
+
+  - name: u16microbase_build
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: u16microbase_repo
+      - IN: drydock_cli
+      - IN: rt_creds
+        switch: off
+      - TASK:
+          name: u16microbase_build
+          runtime:
+            options:
+              env:
+                - IMG_REPO_NAME: "drydock"
+                - IMG_NAME: "u16microbase"
+                - REL_VER: "master"
+                - IMG_JFROG_OUT: "u16microbase_img"
+          script:
+            - pushd $(shipctl get_resource_state distobase_repo)
+            - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
+            - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
+            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - docker build -t=$RT_REGISTRY/pipelines-$IMG_NAME:$REL_VER .
+            - echo "Pushing $RT_REGISTRY/pipelines-$IMG_NAME:$REL_VER to Artifactory"
+            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
+            - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
+            - jfrog rt bag $JOB_NAME $BUILD_NUMBER
+            - popd
+      - OUT: u16microbase_img
+    on_success:
+      script:
+        - shipctl put_resource_state_multi $IMG_JFROG_OUT "versionName=$REL_VER" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
         - echo "Publishing build info"
         - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
