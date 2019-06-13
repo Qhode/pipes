@@ -1265,15 +1265,16 @@ jobs:
                 - IMG_JFROG_OUT: "distrobase_img"
           script:
             - pushd $(shipctl get_resource_state distrobase_repo)
-            - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
-            - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
+            - export IMG_NAME="$IMG_REPO_NAME/$IMG_NAME"
+            - ./build.sh
+            - docker push "${IMG_NAME}:${REL_VER}"
             - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
             - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
-            - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
+            - docker tag "${IMG_NAME}:${REL_VER}" $RT_IMG_NAME:$REL_VER
             - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
@@ -1304,7 +1305,7 @@ jobs:
                 - REL_VER: "master"
                 - IMG_JFROG_OUT: "u16microbase_img"
           script:
-            - pushd $(shipctl get_resource_state distobase_repo)
+            - pushd $(shipctl get_resource_state u16microbase_repo)
             - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
