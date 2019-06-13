@@ -766,7 +766,8 @@ jobs:
             - REPO_DIR=$(shipctl get_resource_state "$RES_REPO")
             - export GOPATH="$REPO_DIR/gol"
             - pushd $REPO_DIR
-            - cd $REPORTS_PATH && ./package/$ARCHITECTURE/$OS/package.sh
+            - pushd $REPORTS_PATH
+            - ./package/$ARCHITECTURE/$OS/package.sh
             - tar -zcvf "$TAR_FILENAME" -C "$GOPATH/bin" .
             - aws s3 cp --acl public-read "$TAR_FILENAME" "$S3_URL/$TAG_VER/"
             - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
@@ -775,6 +776,7 @@ jobs:
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - TARGET_LOCATION=pipelines-artifacts/reports
             - jfrog rt upload --build-name=$JOB_NAME --build-number=$BUILD_NUMBER $TAR_FILENAME $TARGET_LOCATION/$TAR_FILENAME
+            - popd
             - jfrog rt bag $JOB_NAME $BUILD_NUMBER
     on_success:
       script:
