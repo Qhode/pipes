@@ -277,13 +277,13 @@ resources:
   - name: distrobase_img
     type: image
     versionTemplate:
-      sourceName: "pipelines-docker.jfrog.io/pipelines-distrobase"
+      sourceName: "pipelines-docker.jfrog.io/jfrog/pipelines-distrobase"
       versionName: master
 
   - name: u16microbase_img
     type: image
     versionTemplate:
-      sourceName: "pipelines-docker.jfrog.io/pipelines-u16microbase"
+      sourceName: "pipelines-docker.jfrog.io/jfrog/pipelines-u16microbase"
       versionName: master
 
 jobs:
@@ -717,7 +717,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-u16reqproc"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-u16reqproc"
             - docker tag $IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
@@ -835,7 +835,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-$IMG_NAME"
             - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
@@ -871,7 +871,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-$IMG_NAME"
             - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
@@ -907,7 +907,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-$IMG_NAME"
             - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
@@ -943,7 +943,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-$IMG_NAME"
             - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
@@ -979,7 +979,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-$IMG_NAME"
             - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
@@ -1015,7 +1015,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-$IMG_NAME"
             - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
@@ -1051,7 +1051,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-$IMG_NAME"
             - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
@@ -1087,7 +1087,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-$IMG_NAME"
             - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
@@ -1123,7 +1123,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-$IMG_NAME"
             - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
             - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
@@ -1160,7 +1160,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-$IMG_NAME"
             - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
             - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
@@ -1197,7 +1197,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-$IMG_NAME"
             - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
             - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
@@ -1234,7 +1234,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-$IMG_NAME"
             - docker tag $IMG_REPO_NAME/$IMG_NAME:$REL_VER $RT_IMG_NAME:$REL_VER
             - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
@@ -1273,7 +1273,7 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-distrobase"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-distrobase"
             - docker tag "${IMG_NAME}:${REL_VER}" $RT_IMG_NAME:$REL_VER
             - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
@@ -1311,9 +1311,9 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
-            - RT_IMG_NAME="$RT_REGISTRY/pipelines-$IMG_NAME"
-            - docker build -t=$RT_REGISTRY/pipelines-$IMG_NAME:$REL_VER .
-            - echo "Pushing $RT_REGISTRY/pipelines-$IMG_NAME:$REL_VER to Artifactory"
+            - RT_IMG_NAME="$RT_REGISTRY/jfrog/pipelines-$IMG_NAME"
+            - docker build -t=$RT_REGISTRY/jfrog/pipelines-$IMG_NAME:$REL_VER .
+            - echo "Pushing $RT_REGISTRY/jfrog/pipelines-$IMG_NAME:$REL_VER to Artifactory"
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $RT_IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
             - jfrog rt bag $JOB_NAME $BUILD_NUMBER
