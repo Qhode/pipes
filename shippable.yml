@@ -741,6 +741,8 @@ jobs:
       - IN: kermit_repo
       - IN: kermit_bits_cli
         switch: off
+      - IN: rt_creds
+        switch: off
       - TASK:
           name: reports_lib_build
           runtime:
@@ -767,9 +769,18 @@ jobs:
             - cd $REPORTS_PATH && ./package/$ARCHITECTURE/$OS/package.sh
             - tar -zcvf "$TAR_FILENAME" -C "$GOPATH/bin" .
             - aws s3 cp --acl public-read "$TAR_FILENAME" "$S3_URL/$TAG_VER/"
+            - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
+            - TARGET_LOCATION=pipelines-artifacts/reports
+            - jfrog rt upload --build-name=$JOB_NAME --build-number=$BUILD_NUMBER $TAR_FILENAME $TARGET_LOCATION/$TAR_FILENAME
+            - jfrog rt bag $JOB_NAME $BUILD_NUMBER
     on_success:
       script:
         - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "TAG_VER=$TAG_VER" "FILE_REPO_COMMIT_SHA=$REPO_COMMIT" "WEB_URL=$WEB_URL" "S3_URL=$S3_URL" "TAR_FILENAME=$TAR_FILENAME" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS"
+        - echo "Publishing build info"
+        - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
 
   - name: u18cpp_x8664_build
     type: runSh
