@@ -628,6 +628,11 @@ jobs:
             - RT_BUCKET=$(shipctl get_integration_resource_field "rt_creds" "BUCKET")
             - TAR_FILENAME="pipelines-$REL_VER.tar.gz"
             - INSTALLER_REPO_DIR=$(shipctl get_resource_state "$RES_REPO")
+            - echo "----------- Removing metadata from package ----------"
+            - pushd $INSTALLER_REPO_DIR
+            - rm -rf .git
+            - rm -rf .gitignore
+            - popd
             - tar -zcf "$TAR_FILENAME" -C "$INSTALLER_REPO_DIR" .
             - jfrog rt u "$TAR_FILENAME" "$RT_BUCKET" --build-name="$JOB_NAME" --build-number="$BUILD_NUMBER"
       - OUT: installer_img
