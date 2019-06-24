@@ -1372,8 +1372,8 @@ jobs:
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - TARGET_LOCATION=pipelines-artifacts/reqExec
             - jfrog rt upload --build-name=$JOB_NAME --build-number=$BUILD_NUMBER $TAR_FILENAME $TARGET_LOCATION/$TAR_FILENAME
-            - popd
             - jfrog rt bag $JOB_NAME $BUILD_NUMBER
+            - popd
     on_success:
       script:
         - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "FILE_REPO_COMMIT_SHA=$REPO_COMMIT" "S3_BUCKET=$S3_BUCKET_BINARY_DIR" "S3_FILENAME=$TAR_FILENAME" "ARCHITECTURE=$RCHITECTURE" "OS=$OS"
