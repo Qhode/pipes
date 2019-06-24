@@ -1359,13 +1359,13 @@ jobs:
           script:
             - pushd $(shipctl get_resource_state "reqExec_repo")
             - REPO_COMMIT=$(shipctl get_resource_version_key "reqExec_repo" "shaData.commitSha")
-            - BINARY_TAR="reqExec-$REL_VER-$ARCHITECTURE-$OS.tar.gz"
+            - TAR_FILENAME="reqExec-$REL_VER-$ARCHITECTURE-$OS.tar.gz"
             - PACK_SCRIPT="./package/$ARCHITECTURE/$OS/package.sh"
             - S3_BUCKET_BINARY_DIR="$ARTIFACTS_BUCKET/$REL_VER/"
             - $PACK_SCRIPT
             - mkdir -p $BINARY_DIR && cp -r dist $BINARY_DIR
-            - tar -zcvf "$BINARY_TAR" -C "$BINARY_DIR" .
-            - aws s3 cp --acl public-read "$BINARY_TAR" "$S3_BUCKET_BINARY_DIR"
+            - tar -zcvf "$TAR_FILENAME" -C "$BINARY_DIR" .
+            - aws s3 cp --acl public-read "$TAR_FILENAME" "$S3_BUCKET_BINARY_DIR"
             - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
@@ -1376,6 +1376,6 @@ jobs:
             - jfrog rt bag $JOB_NAME $BUILD_NUMBER
     on_success:
       script:
-        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "FILE_REPO_COMMIT_SHA=$REPO_COMMIT" "S3_BUCKET=$S3_BUCKET_BINARY_DIR" "S3_FILENAME=$BINARY_TAR" "ARCHITECTURE=$RCHITECTURE" "OS=$OS"
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "FILE_REPO_COMMIT_SHA=$REPO_COMMIT" "S3_BUCKET=$S3_BUCKET_BINARY_DIR" "S3_FILENAME=$TAR_FILENAME" "ARCHITECTURE=$RCHITECTURE" "OS=$OS"
         - echo "Publishing build info"
         - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
