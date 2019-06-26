@@ -1379,3 +1379,91 @@ jobs:
         - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "FILE_REPO_COMMIT_SHA=$REPO_COMMIT" "S3_BUCKET=$S3_BUCKET_BINARY_DIR" "S3_FILENAME=$TAR_FILENAME" "ARCHITECTURE=$RCHITECTURE" "OS=$OS"
         - echo "Publishing build info"
         - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
+
+  - name: u16_reqExec_x8664_pack
+    type: runSh
+    triggerMode: parallel
+    dependencyMode: strict
+    steps:
+      - IN: reqExec_repo
+      - IN: kermit_bits_cli
+        switch: off
+      - IN: rt_creds
+        switch: off
+      - TASK:
+          name: u16_reqexec_pack
+          runtime:
+            options:
+              env:
+                - ARCHITECTURE: "x86_64"
+                - OS: "Ubuntu_16.04"
+                - ARTIFACTS_BUCKET: "s3://shippable-artifacts/pipelines-reqExec"
+                - REL_VER: "master"
+                - BINARY_DIR: "/tmp/reqExec"
+          script:
+            - pushd $(shipctl get_resource_state "reqExec_repo")
+            - REPO_COMMIT=$(shipctl get_resource_version_key "reqExec_repo" "shaData.commitSha")
+            - TAR_FILENAME="reqExec-$REL_VER-$ARCHITECTURE-$OS.tar.gz"
+            - PACK_SCRIPT="./package/$ARCHITECTURE/$OS/package.sh"
+            - S3_BUCKET_BINARY_DIR="$ARTIFACTS_BUCKET/$REL_VER/"
+            - $PACK_SCRIPT
+            - mkdir -p $BINARY_DIR && cp -r dist $BINARY_DIR
+            - tar -zcvf "$TAR_FILENAME" -C "$BINARY_DIR" .
+            - aws s3 cp --acl public-read "$TAR_FILENAME" "$S3_BUCKET_BINARY_DIR"
+            - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
+            - TARGET_LOCATION=pipelines-artifacts/reqExec
+            - jfrog rt upload --build-name=$JOB_NAME --build-number=$BUILD_NUMBER $TAR_FILENAME $TARGET_LOCATION/$TAR_FILENAME
+            - jfrog rt bag $JOB_NAME $BUILD_NUMBER
+            - popd
+    on_success:
+      script:
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "FILE_REPO_COMMIT_SHA=$REPO_COMMIT" "S3_BUCKET=$S3_BUCKET_BINARY_DIR" "S3_FILENAME=$TAR_FILENAME" "ARCHITECTURE=$RCHITECTURE" "OS=$OS"
+        - echo "Publishing build info"
+        - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
+
+  - name: c7_reqExec_x8664_pack
+    type: runSh
+    triggerMode: parallel
+    dependencyMode: strict
+    steps:
+      - IN: reqExec_repo
+      - IN: kermit_bits_cli
+        switch: off
+      - IN: rt_creds
+        switch: off
+      - TASK:
+          name: c7_reqexec_pack
+          runtime:
+            options:
+              env:
+                - ARCHITECTURE: "x86_64"
+                - OS: "CentOS_7"
+                - ARTIFACTS_BUCKET: "s3://shippable-artifacts/pipelines-reqExec"
+                - REL_VER: "master"
+                - BINARY_DIR: "/tmp/reqExec"
+          script:
+            - pushd $(shipctl get_resource_state "reqExec_repo")
+            - REPO_COMMIT=$(shipctl get_resource_version_key "reqExec_repo" "shaData.commitSha")
+            - TAR_FILENAME="reqExec-$REL_VER-$ARCHITECTURE-$OS.tar.gz"
+            - PACK_SCRIPT="./package/$ARCHITECTURE/$OS/package.sh"
+            - S3_BUCKET_BINARY_DIR="$ARTIFACTS_BUCKET/$REL_VER/"
+            - $PACK_SCRIPT
+            - mkdir -p $BINARY_DIR && cp -r dist $BINARY_DIR
+            - tar -zcvf "$TAR_FILENAME" -C "$BINARY_DIR" .
+            - aws s3 cp --acl public-read "$TAR_FILENAME" "$S3_BUCKET_BINARY_DIR"
+            - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
+            - TARGET_LOCATION=pipelines-artifacts/reqExec
+            - jfrog rt upload --build-name=$JOB_NAME --build-number=$BUILD_NUMBER $TAR_FILENAME $TARGET_LOCATION/$TAR_FILENAME
+            - jfrog rt bag $JOB_NAME $BUILD_NUMBER
+            - popd
+    on_success:
+      script:
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "FILE_REPO_COMMIT_SHA=$REPO_COMMIT" "S3_BUCKET=$S3_BUCKET_BINARY_DIR" "S3_FILENAME=$TAR_FILENAME" "ARCHITECTURE=$RCHITECTURE" "OS=$OS"
+        - echo "Publishing build info"
+        - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
