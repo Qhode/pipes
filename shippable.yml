@@ -677,7 +677,6 @@ jobs:
       - IN: installer_img
       - IN: kwww_img
       - IN: kapi_img
-      - IN: kmicro_img
       - IN: kscriptsbase_img
       - IN: rt_creds
         switch: off
