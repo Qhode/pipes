@@ -58,6 +58,7 @@ pull_images() {
   _exec_cmd "sudo docker pull $KWWW_IMG:$DEPLOY_VERSION"
   _exec_cmd "sudo docker pull $KAPI_IMG:$DEPLOY_VERSION"
   _exec_cmd "sudo docker pull $KMICRO_IMG:$DEPLOY_VERSION"
+  _exec_cmd "sudo docker pull $KSCRIPTSBASE_IMG:$DEPLOY_VERSION"
 
 }
 
