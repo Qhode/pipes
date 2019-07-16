@@ -547,11 +547,13 @@ jobs:
             - FROM_NAME=$(shipctl get_resource_version_key kmicro_img "sourceName")
             - export MICRO_NAME="$RT_REGISTRY/$FROM_NAME"
             - export MICRO_TAG="$REL_VER"
+            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
+            - echo "Pulling base image $MICRO_NAME:$MICRO_TAG from Artifactory"
+            - jfrog rt docker-pull $MICRO_NAME:$MICRO_TAG $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
             - shipctl replace Dockerfile
             - echo "Building $IMG_NAME:$REL_VER"
             - docker build -t=$IMG_NAME:$REL_VER .
             - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
-            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - jfrog rt docker-push $IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
             - jfrog rt bag $JOB_NAME $BUILD_NUMBER
             - popd
