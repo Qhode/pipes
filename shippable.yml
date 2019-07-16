@@ -545,8 +545,8 @@ jobs:
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
             - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
             - FROM_NAME=$(shipctl get_resource_version_key kmicro_img "sourceName")
-            - MICRO_NAME="$RT_REGISTRY/$FROM_NAME"
-            - MICRO_TAG="$REL_VER"
+            - export MICRO_NAME="$RT_REGISTRY/$FROM_NAME"
+            - export MICRO_TAG="$REL_VER"
             - shipctl replace Dockerfile
             - echo "Building $IMG_NAME:$REL_VER"
             - docker build -t=$IMG_NAME:$REL_VER .
