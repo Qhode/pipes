@@ -715,6 +715,7 @@ jobs:
       - IN: kwww_img
       - IN: kapi_img
       - IN: kscriptsbase_img
+      - IN: kmicro_img
       - IN: rt_creds
         switch: off
       - IN: pipes_repo
