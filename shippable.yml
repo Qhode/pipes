@@ -521,7 +521,7 @@ jobs:
     type: runSh
     steps:
       - IN: kexecTemplates_repo
-      - IN: kmicro_img
+      - IN: kermit_repo
       - IN: rt_creds
         switch: off
       - TASK:
@@ -530,26 +530,27 @@ jobs:
             options:
               env:
                 - IMG_OUT: "kscriptsbase_img"
-                - RES_REPO: "kexecTemplates_repo"
+                - EXEC_TEMPLATES_REPO: "kexecTemplates_repo"
+                - MICRO_REPO: "kermit_repo"
                 - IMG: "kscriptsbase"
+                - BASE_IMAGE: "drydock/u18node"
                 - REL_VER: "master"
-
           script:
-            - pushd $(shipctl get_resource_state "$RES_REPO")
+            - pushd $(shipctl get_resource_state "$EXEC_TEMPLATES_REPO")
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
-            - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
+            - EXECREPO_COMMIT=$(shipctl get_resource_version_key "$EXEC_TEMPLATES_REPO" "shaData.commitSha")
+            - MICROREPO_COMMIT=$(shipctl get_resource_version_key "$MICRO_REPO" "shaData.commitSha")
             - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
             - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
-            - FROM_NAME=$(shipctl get_resource_version_key kmicro_img "sourceName")
-            - export MICRO_NAME="$RT_REGISTRY/$FROM_NAME"
-            - export MICRO_TAG="$REL_VER"
+            - export BASE_IMAGE="$BASE_IMAGE"
+            - export BASE_TAG="$REL_VER"
+            - export EXEC_TEMPLATES_PATH=$(shipctl get_resource_state "$EXEC_TEMPLATES_REPO")
+            - export MICRO_PATH=$(shipctl get_resource_state "$MICRO_REPO")
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
-            - echo "Pulling base image $MICRO_NAME:$MICRO_TAG from Artifactory"
-            - jfrog rt docker-pull $MICRO_NAME:$MICRO_TAG $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
             - shipctl replace Dockerfile
             - echo "Building $IMG_NAME:$REL_VER"
             - docker build -t=$IMG_NAME:$REL_VER .
@@ -560,8 +561,8 @@ jobs:
       - OUT: kscriptsbase_img
     on_success:
       script:
-        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
-        - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "commitSha=$REPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "commitSha=$REPO_COMMIT" "microCommitSha=$MICROREPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
+        - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "commitSha=$REPO_COMMIT" "microCommitSha=$MICROREPO_COMMIT" "IMG_NAME=$IMG_NAME" "IMG_TAG=$REL_VER"
         - echo "Publishing build info"
         - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
 
