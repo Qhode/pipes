@@ -548,12 +548,12 @@ jobs:
             - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
             - export BASE_IMAGE="$BASE_IMAGE"
             - export BASE_TAG="$REL_VER"
-            - export EXEC_TEMPLATES_PATH=$(shipctl get_resource_state "$EXEC_TEMPLATES_REPO")
-            - export MICRO_PATH=$(shipctl get_resource_state "$MICRO_REPO")
+            - export EXEC_TEMPLATES_PATH=$(realpath --relative-to="../.." $(shipctl get_resource_state "$EXEC_TEMPLATES_REPO"))
+            - export MICRO_PATH=$(realpath --relative-to="../.." $(shipctl get_resource_state "$MICRO_REPO"))
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - shipctl replace Dockerfile
             - echo "Building $IMG_NAME:$REL_VER"
-            - docker build -t=$IMG_NAME:$REL_VER .
+            - docker build -t=$IMG_NAME:$REL_VER -f Dockerfile ./../..
             - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
             - jfrog rt docker-push $IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
             - jfrog rt bag $JOB_NAME $BUILD_NUMBER
