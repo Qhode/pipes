@@ -591,9 +591,9 @@ jobs:
 
           script:
             - pushd $(shipctl get_resource_state "$RES_REPO")/nod/api
-            - tar -cvzf node.tar.gz $(shipctl get_resource_state "$NODEINIT_REPO") .
-            - tar -cvzf reqKick.tar.gz $(shipctl get_resource_state "$REQKICK_REPO") .
-            - tar -cvzf execTemplates.tar.gz $(shipctl get_resource_state "$EXEC_TEMPLATES_REPO") .
+            - tar -czf node.tar.gz $(shipctl get_resource_state "$NODEINIT_REPO") .
+            - tar -czf reqKick.tar.gz $(shipctl get_resource_state "$REQKICK_REPO") .
+            - tar -czf execTemplates.tar.gz $(shipctl get_resource_state "$EXEC_TEMPLATES_REPO") .
             - ls -atlh .
             - IMG_NAME=$(shipctl get_resource_version_key "$IMG_OUT" "sourceName")
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
