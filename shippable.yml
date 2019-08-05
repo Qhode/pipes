@@ -583,7 +583,7 @@ jobs:
               env:
                 - NODEINIT_REPO: "knodeInit_repo"
                 - REQKICK_REPO: "kreqKick_repo"
-                - EXECTEMPLATES_REPO: "kexecTemplates_repo"
+                - EXEC_TEMPLATES_REPO: "kexecTemplates_repo"
                 - IMG_OUT: "kapi_img"
                 - RES_REPO: "kermit_repo"
                 - IMG: "kapi"
