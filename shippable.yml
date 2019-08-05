@@ -692,8 +692,7 @@ jobs:
             - echo "Pushing $IMG_NAME:$REL_VER to Artifactory"
             - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
             - echo "----------- Pushing image to installer repo ---------"
-            - docker tag $IMG_NAME:$REL_VER $RT_REGISTRY/installer:$REL_VER
-            - jfrog rt docker-push $RT_REGISTRY/installer:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
+            - jfrog rt docker-push $IMG_NAME:$REL_VER $RT_REGISTRY_KEY --build-name=$JOB_NAME --build-number=$BUILD_NUMBER
             - echo "----------- Gathering build info --------------------"
             - jfrog rt bag $JOB_NAME $BUILD_NUMBER
             - popd
