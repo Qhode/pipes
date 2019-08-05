@@ -46,12 +46,12 @@ resources:
       sourceName: "Shippable/ribbit"
       branch: master
 
-  - name: knodeInit_repo
-    type: gitRepo
-    integration: "qhode_gh"
-    pointer:
-      sourceName: "Shippable/kermit-nodeInit"
-      branch: master
+      #   - name: knodeInit_repo
+      #     type: gitRepo
+      #     integration: "qhode_gh"
+      #     pointer:
+      #       sourceName: "Shippable/kermit-nodeInit"
+      #       branch: master
 
   - name: kreqProc_repo
     type: gitRepo
@@ -60,19 +60,19 @@ resources:
       sourceName: "Shippable/kermit-reqProc"
       branch: master
 
-  - name: kreqKick_repo
-    type: gitRepo
-    integration: "qhode_gh"
-    pointer:
-      sourceName: "Shippable/kermit-reqKick"
-      branch: master
+      #   - name: kreqKick_repo
+      #     type: gitRepo
+      #     integration: "qhode_gh"
+      #     pointer:
+      #       sourceName: "Shippable/kermit-reqKick"
+      #       branch: master
 
-  - name: kexecTemplates_repo
-    type: gitRepo
-    integration: "qhode_gh"
-    pointer:
-      sourceName: "Shippable/kermit-execTemplates"
-      branch: master
+      #   - name: kexecTemplates_repo
+      #     type: gitRepo
+      #     integration: "qhode_gh"
+      #     pointer:
+      #       sourceName: "Shippable/kermit-execTemplates"
+      #       branch: master
 
   - name: kdb_repo
     type: gitRepo
@@ -573,6 +573,7 @@ jobs:
       - IN: kermit_repo
       - IN: knodeInit_repo
       - IN: kreqKick_repo
+      - IN: kexecTemplates_repo
       - IN: rt_creds
         switch: off
       - TASK:
