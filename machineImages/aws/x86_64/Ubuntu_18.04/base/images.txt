@@ -1,0 +1,4 @@
+jfrog/pipelines-u18node
+jfrog/pipelines-u18java
+jfrog/pipelines-u18cpp
+jfrog/pipelines-u18go
