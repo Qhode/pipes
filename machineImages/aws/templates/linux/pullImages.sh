@@ -2,6 +2,15 @@
 
 login() {
   if [ ! -z "$RT_URL" ] && [ ! -z "$RT_USER" ] && [ ! -z "$RT_API_KEY" ]; then
+    if which jfrog &> /dev/null; then
+      echo "jfrog cli already installed"
+    else
+      JFROG_VERSION=1.26.1
+      echo "================= Adding jfrog-cli $JFROG_VERSION  ================"
+      wget -nv https://api.bintray.com/content/jfrog/jfrog-cli-go/"$JFROG_VERSION"/jfrog-cli-linux-amd64/jfrog?bt_package=jfrog-cli-linux-amd64 -O jfrog
+      chmod +x jfrog
+      mv jfrog /usr/bin/jfrog
+    fi
     echo "Logging into artifactory"
     jfrog rt config --url $RT_URL --user $RT_USER --apikey $RT_API_KEY --interactive=false
   else
