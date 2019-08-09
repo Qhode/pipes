@@ -880,6 +880,13 @@ jobs:
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - GITHUB_API_KEY=$(shipctl get_integration_resource_field "github_creds" "TOKEN")
+            - |
+              if [ -z "$GITHUB_API_KEY" ]; then
+                echo "github api key empty"
+                exit 1
+              else
+                echo "github api key not empty"
+              fi
             - pushd $(shipctl get_resource_state "pipes_repo")/machineImages/$PROVIDER/$ARCHITECTURE/$OS/$IMG_TYPE
             - cp -R ../../../templates/linux/* .
             - cp -R ../../../templates/$IMG_TYPE/* .
