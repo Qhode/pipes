@@ -17,6 +17,13 @@ readonly REQEXEC_DOWNLOAD_URL="https://s3.amazonaws.com/shippable-artifacts/pipe
 readonly IS_SWAP_ENABLED=false
 export INIT_SCRIPT_NAME="Docker_$DOCKER_VERSION.sh"
 
+if [ -z "$GITHUB_API_KEY" ]; then
+  echo "github api key empty"
+  exit 1
+else
+  echo "github api key not empty"
+fi
+
 check_envs() {
   expected_envs=$1
   for env in "${expected_envs[@]}"
