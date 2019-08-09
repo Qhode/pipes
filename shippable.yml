@@ -912,8 +912,110 @@ jobs:
                 - OS: "Ubuntu_18.04"
                 - TAG_VER: "master"
                 - RES_REPO: "kermit_repo"
-                - S3_URL: "s3://shippable-artifacts/reports"
-                - WEB_URL: "https://s3.amazonaws.com/shippable-artifacts/reports"
+                - S3_URL: "s3://shippable-artifacts/pipelines-reports"
+                - WEB_URL: "https://s3.amazonaws.com/shippable-artifacts/pipelines-reports"
+                - REPORTS_PATH: "./gol/src/github.com/Shippable/reports"
+              imageName: drydock/u14golall
+              imageTag: v6.4.4
+          script:
+            - gvm use go1.9.5
+            ## This removes the line from /etc/drydock/.env file that sources gvm command.
+            - cd /etc/drydock/ && sed -i '$ d' .env
+            - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
+            - TAR_FILENAME="reports-$TAG_VER-$ARCHITECTURE-$OS.tar.gz"
+            - REPO_DIR=$(shipctl get_resource_state "$RES_REPO")
+            - export GOPATH="$REPO_DIR/gol"
+            - pushd $REPO_DIR
+            - pushd $REPORTS_PATH
+            - ./package/$ARCHITECTURE/$OS/package.sh
+            - tar -zcvf "$TAR_FILENAME" -C "$GOPATH/bin" .
+            - aws s3 cp --acl public-read "$TAR_FILENAME" "$S3_URL/$TAG_VER/"
+            - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
+            - TARGET_LOCATION=pipelines-artifacts/reports
+            - jfrog rt upload --build-name=$JOB_NAME --build-number=$BUILD_NUMBER $TAR_FILENAME $TARGET_LOCATION/$TAR_FILENAME
+            - popd
+            - jfrog rt bag $JOB_NAME $BUILD_NUMBER
+    on_success:
+      script:
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "TAG_VER=$TAG_VER" "FILE_REPO_COMMIT_SHA=$REPO_COMMIT" "WEB_URL=$WEB_URL" "S3_URL=$S3_URL" "TAR_FILENAME=$TAR_FILENAME" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS"
+        - echo "Publishing build info"
+        - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
+
+  - name: u16repLib_x8664_build
+    type: runSh
+    triggerMode: parallel
+    dependencyMode: strict
+    steps:
+      - IN: kermit_repo
+      - IN: kermit_bits_cli
+        switch: off
+      - IN: rt_creds
+        switch: off
+      - TASK:
+          name: reports_lib_build
+          runtime:
+            options:
+              env:
+                - ARCHITECTURE: "x86_64"
+                - OS: "Ubuntu_16.04"
+                - TAG_VER: "master"
+                - RES_REPO: "kermit_repo"
+                - S3_URL: "s3://shippable-artifacts/pipelines-reports"
+                - WEB_URL: "https://s3.amazonaws.com/shippable-artifacts/pipelines-reports"
+                - REPORTS_PATH: "./gol/src/github.com/Shippable/reports"
+              imageName: drydock/u14golall
+              imageTag: v6.4.4
+          script:
+            - gvm use go1.9.5
+            ## This removes the line from /etc/drydock/.env file that sources gvm command.
+            - cd /etc/drydock/ && sed -i '$ d' .env
+            - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
+            - TAR_FILENAME="reports-$TAG_VER-$ARCHITECTURE-$OS.tar.gz"
+            - REPO_DIR=$(shipctl get_resource_state "$RES_REPO")
+            - export GOPATH="$REPO_DIR/gol"
+            - pushd $REPO_DIR
+            - pushd $REPORTS_PATH
+            - ./package/$ARCHITECTURE/$OS/package.sh
+            - tar -zcvf "$TAR_FILENAME" -C "$GOPATH/bin" .
+            - aws s3 cp --acl public-read "$TAR_FILENAME" "$S3_URL/$TAG_VER/"
+            - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - jfrog rt config --url "$RT_URL" --user "$RT_USER" --apikey "$RT_API_KEY" --interactive=false
+            - TARGET_LOCATION=pipelines-artifacts/reports
+            - jfrog rt upload --build-name=$JOB_NAME --build-number=$BUILD_NUMBER $TAR_FILENAME $TARGET_LOCATION/$TAR_FILENAME
+            - popd
+            - jfrog rt bag $JOB_NAME $BUILD_NUMBER
+    on_success:
+      script:
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "TAG_VER=$TAG_VER" "FILE_REPO_COMMIT_SHA=$REPO_COMMIT" "WEB_URL=$WEB_URL" "S3_URL=$S3_URL" "TAR_FILENAME=$TAR_FILENAME" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS"
+        - echo "Publishing build info"
+        - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
+
+  - name: c7repLib_x8664_build
+    type: runSh
+    triggerMode: parallel
+    dependencyMode: strict
+    steps:
+      - IN: kermit_repo
+      - IN: kermit_bits_cli
+        switch: off
+      - IN: rt_creds
+        switch: off
+      - TASK:
+          name: reports_lib_build
+          runtime:
+            options:
+              env:
+                - ARCHITECTURE: "x86_64"
+                - OS: "CentOS_7"
+                - TAG_VER: "master"
+                - RES_REPO: "kermit_repo"
+                - S3_URL: "s3://shippable-artifacts/pipelines-reports"
+                - WEB_URL: "https://s3.amazonaws.com/shippable-artifacts/pipelines-reports"
                 - REPORTS_PATH: "./gol/src/github.com/Shippable/reports"
               imageName: drydock/u14golall
               imageTag: v6.4.4
