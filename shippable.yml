@@ -32,6 +32,11 @@ resources:
     type: integration
     integration: rt_key
 
+  # CREDS for github
+  - name: github_creds
+    type: integration
+    integration: qhode_gh
+
   - name: kermit_repo
     type: gitRepo
     integration: "qhode_gh"
@@ -290,6 +295,30 @@ resources:
     type: image
     versionTemplate:
       sourceName: "pipelines-docker.jfrog.io/jfrog/pipelines-u16microbase"
+      versionName: master
+
+  - name: u18java_x8664_img
+    type: image
+    versionTemplate:
+      sourceName: "pipelines-docker.jfrog.io/jfrog/pipelines-u18java"
+      versionName: master
+
+  - name: u18go_x8664_img
+    type: image
+    versionTemplate:
+      sourceName: "pipelines-docker.jfrog.io/jfrog/pipelines-u18go"
+      versionName: master
+
+  - name: u18cpp_x8664_img
+    type: image
+    versionTemplate:
+      sourceName: "pipelines-docker.jfrog.io/jfrog/pipelines-u18cpp"
+      versionName: master
+
+  - name: u18node_x8664_img
+    type: image
+    versionTemplate:
+      sourceName: "pipelines-docker.jfrog.io/jfrog/pipelines-u18node"
       versionName: master
 
   - name: reqExec_repo
@@ -810,23 +839,29 @@ jobs:
         - echo "Publishing build info"
         - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
 
-  - name: base_aws_x8664_u16
+  - name: base_aws_x8664_u18
     type: runSh
     dependencyMode: strict
     steps:
       - IN: kermit_bits_cli
         switch: off
-      - IN: aws_x8664_u16_img_params
+      - IN: github_creds
+        switch: off
+      - IN: rt_creds
         switch: off
       - IN: knodeInit_repo
       - IN: pipes_repo
         switch: off
+      - IN: u18java_x8664_img
+      - IN: u18node_x8664_img
+      - IN: u18cpp_x8664_img
+      - IN: u18go_x8664_img
       - TASK:
-          name: prep_aws_x8664_u16_img
+          name: base_aws_x8664_u18
           runtime:
             options:
               env:
-                - OS: Ubuntu_16.04
+                - OS: Ubuntu_18.04
                 - ARCH: x86_64
                 - SOURCE_AMI: "ami-07d0cf3af28718ef8"
                 - VPC_ID: "vpc-266f3241"
@@ -844,7 +879,7 @@ jobs:
             - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
             - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
-            - GITHUB_API_KEY=$(shipctl get_integration_resource_field "qhode_gh" "TOKEN")
+            - GITHUB_API_KEY=$(shipctl get_integration_resource_field "github_creds" "TOKEN")
             - pushd $(shipctl get_resource_state "pipes_repo")/machineImages/$PROVIDER/$ARCHITECTURE/$OS/$IMG_TYPE
             - cp -R ../../../templates/linux/* .
             - cp -R ../../../templates/$IMG_TYPE/* .
@@ -917,6 +952,7 @@ jobs:
       - IN: drydock_cli
       - IN: rt_creds
         switch: off
+      - OUT: u18cpp_x8664_img
       - TASK:
           name: u18cpp_build
           runtime:
@@ -925,8 +961,10 @@ jobs:
                 - IMG_REPO_NAME: "drydock"
                 - IMG_NAME: "u18cpp"
                 - REL_VER: "master"
+                - IMG_OUT: "u18cpp_x8664_img"
           script:
             - pushd $(shipctl get_resource_state u18cpp_repo)
+            - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
             - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
             - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
@@ -944,6 +982,8 @@ jobs:
       script:
         - echo "Publishing build info"
         - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REL_VER" "IMG_REPO_COMMIT_SHA=$REPO_COMMIT"
+        - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "IMG_REPO_COMMIT_SHA=$REPO_COMMIT"
 
   - name: u18go_x8664_build
     type: runSh
@@ -953,6 +993,7 @@ jobs:
       - IN: drydock_cli
       - IN: rt_creds
         switch: off
+      - OUT: u18go_x8664_img
       - TASK:
           name: u18go_build
           runtime:
@@ -961,8 +1002,10 @@ jobs:
                 - IMG_REPO_NAME: "drydock"
                 - IMG_NAME: "u18go"
                 - REL_VER: "master"
+                - IMG_OUT: "u18go_x8664_img"
           script:
             - pushd $(shipctl get_resource_state u18go_repo)
+            - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
             - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
             - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
@@ -980,6 +1023,8 @@ jobs:
       script:
         - echo "Publishing build info"
         - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REL_VER" "IMG_REPO_COMMIT_SHA=$REPO_COMMIT"
+        - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "IMG_REPO_COMMIT_SHA=$REPO_COMMIT"
 
   - name: u18java_x8664_build
     type: runSh
@@ -989,6 +1034,7 @@ jobs:
       - IN: drydock_cli
       - IN: rt_creds
         switch: off
+      - OUT: u18java_x8664_img
       - TASK:
           name: u18java_build
           runtime:
@@ -997,8 +1043,10 @@ jobs:
                 - IMG_REPO_NAME: "drydock"
                 - IMG_NAME: "u18java"
                 - REL_VER: "master"
+                - IMG_OUT: "u18java_x8664_img"
           script:
             - pushd $(shipctl get_resource_state u18java_repo)
+            - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
             - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
             - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
@@ -1016,6 +1064,8 @@ jobs:
       script:
         - echo "Publishing build info"
         - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REL_VER" "IMG_REPO_COMMIT_SHA=$REPO_COMMIT"
+        - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "IMG_REPO_COMMIT_SHA=$REPO_COMMIT"
 
   - name: u18node_x8664_build
     type: runSh
@@ -1025,6 +1075,7 @@ jobs:
       - IN: drydock_cli
       - IN: rt_creds
         switch: off
+      - OUT: u18node_x8664_img
       - TASK:
           name: u18node_build
           runtime:
@@ -1033,8 +1084,10 @@ jobs:
                 - IMG_REPO_NAME: "drydock"
                 - IMG_NAME: "u18node"
                 - REL_VER: "master"
+                - IMG_OUT: "u18node_x8664_img"
           script:
             - pushd $(shipctl get_resource_state u18node_repo)
+            - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
             - docker build -t=$IMG_REPO_NAME/$IMG_NAME:$REL_VER .
             - docker push $IMG_REPO_NAME/$IMG_NAME:$REL_VER
             - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
@@ -1052,6 +1105,8 @@ jobs:
       script:
         - echo "Publishing build info"
         - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
+        - shipctl put_resource_state_multi $JOB_NAME "versionName=$REL_VER" "IMG_REPO_COMMIT_SHA=$REPO_COMMIT"
+        - shipctl put_resource_state_multi $IMG_OUT "versionName=$REL_VER" "IMG_REPO_COMMIT_SHA=$REPO_COMMIT"
 
   - name: c7node_x8664_build
     type: runSh

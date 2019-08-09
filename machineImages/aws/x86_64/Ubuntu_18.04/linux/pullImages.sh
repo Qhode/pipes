@@ -26,11 +26,11 @@ pull_images() {
   fi
 }
 
-logout() {
+cleanup() {
   echo "Cleaning up jfrog credentials"
   rm -rf ~/.jfrog
 }
 
 login
 pull_images
-logout
+cleanup

@@ -2,8 +2,8 @@
 set -e
 set -o pipefail
 
-readonly NODE_ARCHITECTURE="x86_64"
-readonly NODE_OPERATING_SYSTEM="Ubuntu_18.04"
+readonly ARCHITECTURE="x86_64"
+readonly OS="Ubuntu_18.04"
 readonly REQKICK_DIR="/jfrog/reqKick"
 readonly NODE_SCRIPTS_LOCATION="/jfrog/nodeInit"
 readonly EXECTEMPLATES_DIR="/jfrog/execTemplates"
@@ -12,8 +12,8 @@ readonly NODE_SCRIPTS_DOWNLOAD_LOCATION="/tmp/node.tar.gz"
 readonly NODE_TARBALL_URL="https://$GITHUB_USERNAME:$GITHUB_API_KEY@github.com/Shippable/kermit-nodeInit/archive/$RUNTIME_VERSION.tar.gz"
 readonly REQKICK_DOWNLOAD_URL="https://$GITHUB_USERNAME:$GITHUB_API_KEY@github.com/Shippable/kermit-reqKick/archive/$RUNTIME_VERSION.tar.gz"
 readonly EXECTEMPLATES_DOWNLOAD_URL="https://$GITHUB_USERNAME:$GITHUB_API_KEY@github.com/Shippable/kermit-execTemplates/archive/$RUNTIME_VERSION.tar.gz"
-readonly REPORTS_DOWNLOAD_URL="https://s3.amazonaws.com/shippable-artifacts/reports/$RUNTIME_VERSION/reports-$RUNTIME_VERSION-$NODE_ARCHITECTURE-$NODE_OPERATING_SYSTEM.tar.gz"
-readonly REPORTS_DOWNLOAD_URL="https://s3.amazonaws.com/shippable-artifacts/reqExec/$RUNTIME_VERSION/reqExec-$RUNTIME_VERSION-$NODE_ARCHITECTURE-$NODE_OPERATING_SYSTEM.tar.gz"
+readonly REPORTS_DOWNLOAD_URL="https://s3.amazonaws.com/shippable-artifacts/reports/$RUNTIME_VERSION/reports-$RUNTIME_VERSION-$ARCHITECTURE-$OS.tar.gz"
+readonly REPORTS_DOWNLOAD_URL="https://s3.amazonaws.com/shippable-artifacts/reqExec/$RUNTIME_VERSION/reqExec-$RUNTIME_VERSION-$ARCHITECTURE-$OS.tar.gz"
 readonly IS_SWAP_ENABLED=false
 export INIT_SCRIPT_NAME="Docker_$DOCKER_VERSION.sh"
 
@@ -76,4 +76,4 @@ exec_cmd "tar -xzvf '$NODE_SCRIPTS_DOWNLOAD_LOCATION' \
   --strip-components=1"
 
 __process_msg "Initializing node"
-source "$NODE_SCRIPTS_LOCATION/initScripts/$NODE_ARCHITECTURE/$NODE_OPERATING_SYSTEM/$INIT_SCRIPT_NAME"
+source "$NODE_SCRIPTS_LOCATION/initScripts/$ARCHITECTURE/$OS/$INIT_SCRIPT_NAME"
