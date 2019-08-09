@@ -13,7 +13,7 @@ readonly NODE_TARBALL_URL="https://$GITHUB_USERNAME:$GITHUB_API_KEY@github.com/S
 readonly REQKICK_DOWNLOAD_URL="https://$GITHUB_USERNAME:$GITHUB_API_KEY@github.com/Shippable/kermit-reqKick/archive/$RUNTIME_VERSION.tar.gz"
 readonly EXECTEMPLATES_DOWNLOAD_URL="https://$GITHUB_USERNAME:$GITHUB_API_KEY@github.com/Shippable/kermit-execTemplates/archive/$RUNTIME_VERSION.tar.gz"
 readonly REPORTS_DOWNLOAD_URL="https://s3.amazonaws.com/shippable-artifacts/reports/$RUNTIME_VERSION/reports-$RUNTIME_VERSION-$ARCHITECTURE-$OS.tar.gz"
-readonly REPORTS_DOWNLOAD_URL="https://s3.amazonaws.com/shippable-artifacts/reqExec/$RUNTIME_VERSION/reqExec-$RUNTIME_VERSION-$ARCHITECTURE-$OS.tar.gz"
+readonly REQEXEC_DOWNLOAD_URL="https://s3.amazonaws.com/shippable-artifacts/pipelines-reqExec/$RUNTIME_VERSION/reqExec-$RUNTIME_VERSION-$ARCHITECTURE-$OS.tar.gz"
 readonly IS_SWAP_ENABLED=false
 export INIT_SCRIPT_NAME="Docker_$DOCKER_VERSION.sh"
 
