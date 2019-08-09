@@ -810,7 +810,7 @@ jobs:
         - echo "Publishing build info"
         - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
 
-  - name: prep_aws_x8664_u16_img
+  - name: base_aws_x8664_u16
     type: runSh
     dependencyMode: strict
     steps:
@@ -819,8 +819,6 @@ jobs:
       - IN: aws_x8664_u16_img_params
         switch: off
       - IN: knodeInit_repo
-      - IN: kreqKick_repo
-      - IN: kreqProc_img
       - IN: pipes_repo
         switch: off
       - TASK:
@@ -830,11 +828,33 @@ jobs:
               env:
                 - OS: Ubuntu_16.04
                 - ARCH: x86_64
+                - SOURCE_AMI: "ami-07d0cf3af28718ef8"
+                - VPC_ID: "vpc-266f3241"
+                - SUBNET_ID: "subnet-6df12f24"
+                - SECURITY_GROUP_ID: "sg-f634518c"
+                - REGION: "us-east-1"
+                - SYSTEM_RUNTIME_LANGUAGE_VERSION: "master"
+                - RUNTIME_VERSION: "master"
+                - DOCKER_IMAGE_REGISTRY_URL: "pipelines-docker.jfrog.io"
+                - GITHUB_USERNAME: "avinci"
+                - PROVIDER: "aws"
+                - IMG_TYPE: "base"
+                - DOCKER_VERSION: "18.09"
           script:
-            - pushd $(shipctl get_resource_state "pipes_repo")
-            - cd aws/$ARCH/$OS
-            - ./pack.sh prep_aws_x8664_u16_img kermit_bits_cli
-            - popd
+            - RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
+            - RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
+            - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
+            - GITHUB_API_KEY=$(shipctl get_integration_resource_field "qhode_gh" "TOKEN")
+            - pushd $(shipctl get_resource_state "pipes_repo")/machineImages/$PROVIDER/$ARCHITECTURE/$OS/$IMG_TYPE
+            - cp -R ../../../templates/linux/* .
+            - cp -R ../../../templates/$IMG_TYPE/* .
+            - shipctl replace vars.json
+            - packer validate -var-file=vars.json packer.json
+            - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
+            - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
+    on_success:
+      - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME" "SYSTEM_RUNTIME_LANGUAGE_VERSION=$SYSTEM_RUNTIME_LANGUAGE_VERSION"
+      - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
     on_failure:
       - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCH/$OS/output.txt
 
