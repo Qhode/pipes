@@ -862,7 +862,7 @@ jobs:
             options:
               env:
                 - OS: Ubuntu_18.04
-                - ARCH: x86_64
+                - ARCHITECTURE: x86_64
                 - SOURCE_AMI: "ami-07d0cf3af28718ef8"
                 - VPC_ID: "vpc-266f3241"
                 - SUBNET_ID: "subnet-6df12f24"
