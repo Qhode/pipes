@@ -5,7 +5,7 @@
     "REGION": "",
     "VPC_ID": "",
     "SUBNET_ID": "",
-    "SOURCE_AMI": "test",
+    "SOURCE_AMI": "",
     "SECURITY_GROUP_ID": "",
     "SYSTEM_RUNTIME_LANGUAGE_VERSION": "",
     "RUNTIME_VERSION": "",
