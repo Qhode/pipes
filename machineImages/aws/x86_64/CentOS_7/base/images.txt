@@ -1,0 +1,4 @@
+jfrog/pipelines-c7node
+jfrog/pipelines-c7java
+jfrog/pipelines-c7cpp
+jfrog/pipelines-c7go
