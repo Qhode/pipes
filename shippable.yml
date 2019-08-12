@@ -1132,7 +1132,7 @@ jobs:
               env:
                 - OS: CentOS_7
                 - ARCHITECTURE: x86_64
-                - SOURCE_AMI: "ami-0cfee17793b08a293"
+                - SOURCE_AMI: "ami-0b49723d871f1073a"
                 - VPC_ID: "vpc-266f3241"
                 - SUBNET_ID: "subnet-6df12f24"
                 - SECURITY_GROUP_ID: "sg-f634518c"
