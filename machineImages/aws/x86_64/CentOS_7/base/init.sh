@@ -71,6 +71,9 @@ __process_error() {
 __process_msg "adding dns settings to the node"
 exec_cmd "echo 'supersede domain-name-servers 8.8.8.8, 8.8.4.4;' >> /etc/dhcp/dhclient.conf"
 
+__process_msg "Installing wget"
+exec_cmd "yum install -y wget"
+
 __process_msg "adding auth_no_challenge to ~/.wgetrc"
 touch ~/.wgetrc
 echo "auth_no_challenge = on" > ~/.wgetrc
