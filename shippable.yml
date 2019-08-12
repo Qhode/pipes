@@ -916,10 +916,10 @@ jobs:
                 - WEB_URL: "https://s3.amazonaws.com/shippable-artifacts/pipelines-reports"
                 - REPORTS_PATH: "./gol/src/github.com/Shippable/reports"
                 - RT_TARGET_REPO: pipelines-artifacts/reports
-              imageName: drydock/u14golall
-              imageTag: v6.4.4
+              imageName: drydock/u16golall
+              imageTag: v7.2.4
           script:
-            - gvm use go1.9.5
+            - gvm use go1.11.5
             ## This removes the line from /etc/drydock/.env file that sources gvm command.
             - cd /etc/drydock/ && sed -i '$ d' .env
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
@@ -969,10 +969,10 @@ jobs:
                 - WEB_URL: "https://s3.amazonaws.com/shippable-artifacts/pipelines-reports"
                 - REPORTS_PATH: "./gol/src/github.com/Shippable/reports"
                 - RT_TARGET_REPO: pipelines-artifacts/reports
-              imageName: drydock/u14golall
-              imageTag: v6.4.4
+              imageName: drydock/u16golall
+              imageTag: v7.2.4
           script:
-            - gvm use go1.9.5
+            - gvm use go1.11.5
             ## This removes the line from /etc/drydock/.env file that sources gvm command.
             - cd /etc/drydock/ && sed -i '$ d' .env
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
@@ -1022,10 +1022,10 @@ jobs:
                 - WEB_URL: "https://s3.amazonaws.com/shippable-artifacts/pipelines-reports"
                 - REPORTS_PATH: "./gol/src/github.com/Shippable/reports"
                 - RT_TARGET_REPO: pipelines-artifacts/reports
-              imageName: drydock/u14golall
-              imageTag: v6.4.4
+              imageName: drydock/u16golall
+              imageTag: v7.2.4
           script:
-            - gvm use go1.9.5
+            - gvm use go1.11.5
             ## This removes the line from /etc/drydock/.env file that sources gvm command.
             - cd /etc/drydock/ && sed -i '$ d' .env
             - REPO_COMMIT=$(shipctl get_resource_version_key "$RES_REPO" "shaData.commitSha")
