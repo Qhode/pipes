@@ -1,0 +1,4 @@
+jfrog/pipelines-u16node
+jfrog/pipelines-u16java
+jfrog/pipelines-u16cpp
+jfrog/pipelines-u16go
