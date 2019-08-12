@@ -916,7 +916,7 @@ jobs:
           runtime:
             options:
               env:
-                - OS: Ubuntu_18.04
+                - OS: "u18"
                 - ARCHITECTURE: x86_64
                 - SOURCE_AMI: "ami-07d0cf3af28718ef8"
                 - VPC_ID: "vpc-266f3241"
@@ -930,6 +930,7 @@ jobs:
                 - PROVIDER: "aws"
                 - IMG_TYPE: "base"
                 - DOCKER_VERSION: "18.09"
+                - SSH_USERNAME: "ubuntu"
           script:
             # - export RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
             # - export RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
@@ -971,7 +972,7 @@ jobs:
           runtime:
             options:
               env:
-                - OS: Ubuntu_18.04
+                - OS: "u18"
                 - ARCHITECTURE: x86_64
                 - VPC_ID: "vpc-266f3241"
                 - SUBNET_ID: "subnet-6df12f24"
@@ -983,6 +984,7 @@ jobs:
                 - IMG_TYPE: "patch"
                 - DOCKER_VERSION: "18.09"
                 - BASE_IMG_RES: "base_aws_x8664_u18"
+                - SSH_USERNAME: "ubuntu"
           script:
             - export SOURCE_AMI=$(shipctl get_resource_version_key "$BASE_IMG_RES" "IMAGE_NAME")
             - export GITHUB_API_KEY=$(shipctl get_integration_resource_field "github_creds" "TOKEN")
@@ -1023,7 +1025,7 @@ jobs:
           runtime:
             options:
               env:
-                - OS: Ubuntu_16.04
+                - OS: "u16"
                 - ARCHITECTURE: x86_64
                 - SOURCE_AMI: "ami-0cfee17793b08a293"
                 - VPC_ID: "vpc-266f3241"
@@ -1037,6 +1039,7 @@ jobs:
                 - PROVIDER: "aws"
                 - IMG_TYPE: "base"
                 - DOCKER_VERSION: "18.09"
+                - SSH_USERNAME: "ubuntu"
           script:
             # - export RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
             # - export RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
@@ -1078,7 +1081,7 @@ jobs:
           runtime:
             options:
               env:
-                - OS: Ubuntu_16.04
+                - OS: "u16"
                 - ARCHITECTURE: x86_64
                 - VPC_ID: "vpc-266f3241"
                 - SUBNET_ID: "subnet-6df12f24"
@@ -1090,6 +1093,7 @@ jobs:
                 - IMG_TYPE: "patch"
                 - DOCKER_VERSION: "18.09"
                 - BASE_IMG_RES: "base_aws_x8664_u16"
+                - SSH_USERNAME: "ubuntu"
           script:
             - export SOURCE_AMI=$(shipctl get_resource_version_key "$BASE_IMG_RES" "IMAGE_NAME")
             - export GITHUB_API_KEY=$(shipctl get_integration_resource_field "github_creds" "TOKEN")
@@ -1130,7 +1134,7 @@ jobs:
           runtime:
             options:
               env:
-                - OS: CentOS_7
+                - OS: "c7"
                 - ARCHITECTURE: x86_64
                 - SOURCE_AMI: "ami-0b49723d871f1073a"
                 - VPC_ID: "vpc-266f3241"
@@ -1144,6 +1148,7 @@ jobs:
                 - PROVIDER: "aws"
                 - IMG_TYPE: "base"
                 - DOCKER_VERSION: "18.09"
+                - SSH_USERNAME: "centos"
           script:
             # - export RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
             # - export RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
@@ -1185,7 +1190,7 @@ jobs:
           runtime:
             options:
               env:
-                - OS: CentOS_7
+                - OS: "c7"
                 - ARCHITECTURE: x86_64
                 - VPC_ID: "vpc-266f3241"
                 - SUBNET_ID: "subnet-6df12f24"
@@ -1197,6 +1202,7 @@ jobs:
                 - IMG_TYPE: "patch"
                 - DOCKER_VERSION: "18.09"
                 - BASE_IMG_RES: "base_aws_x8664_c7"
+                - SSH_USERNAME: "centos"
           script:
             - export SOURCE_AMI=$(shipctl get_resource_version_key "$BASE_IMG_RES" "IMAGE_NAME")
             - export GITHUB_API_KEY=$(shipctl get_integration_resource_field "github_creds" "TOKEN")

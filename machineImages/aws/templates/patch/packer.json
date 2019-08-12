@@ -10,7 +10,10 @@
     "RUNTIME_VERSION": "",
     "GITHUB_USERNAME": "",
     "GITHUB_API_KEY": "",
-    "DOCKER_VERSION": ""
+    "DOCKER_VERSION": "",
+    "OS": "",
+    "ARCHITECTURE": "",
+    "SSH_USERNAME": ""
   },
   "builders": [
     {
@@ -24,8 +27,8 @@
       "security_group_id": "{{user `SECURITY_GROUP_ID`}}",
       "source_ami": "{{user `SOURCE_AMI`}}",
       "instance_type": "t2.micro",
-      "ssh_username": "ubuntu",
-      "ami_name": "u18base-ami-{{user `RUNTIME_VERSION`}}-patch-{{isotime \"2006-01-02-1504\"}}",
+      "ssh_username": "{{user `SSH_USERNAME`}}",
+      "ami_name": "{{user `ARCHITECTURE`}}-{{user `OS`}}base-ami-{{user `RUNTIME_VERSION`}}-patch-{{isotime \"2006-01-02-1504\"}}",
       "ami_groups": "all",
       "launch_block_device_mappings": [
         {
