@@ -75,6 +75,9 @@ __process_msg "adding auth_no_challenge to ~/.wgetrc"
 touch ~/.wgetrc
 echo "auth_no_challenge = on" > ~/.wgetrc
 
+__process_msg "checking for the apt resource"
+time (while ps -opid= -C apt.systemd.daily > /dev/null; do sleep 1m; echo 'waiting for apt resource to get free'; done);
+
 __process_msg "downloading node scripts tarball"
 exec_cmd "wget '$NODE_TARBALL_URL' -O $NODE_SCRIPTS_DOWNLOAD_LOCATION"
 
