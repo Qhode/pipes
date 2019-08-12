@@ -919,6 +919,7 @@ jobs:
               imageName: drydock/u16golall
               imageTag: v7.2.4
           script:
+            - source "/root/.gvm/scripts/gvm"
             - gvm use go1.11.5
             ## This removes the line from /etc/drydock/.env file that sources gvm command.
             - cd /etc/drydock/ && sed -i '$ d' .env
@@ -972,6 +973,7 @@ jobs:
               imageName: drydock/u16golall
               imageTag: v7.2.4
           script:
+            - source "/root/.gvm/scripts/gvm"
             - gvm use go1.11.5
             ## This removes the line from /etc/drydock/.env file that sources gvm command.
             - cd /etc/drydock/ && sed -i '$ d' .env
@@ -1025,6 +1027,7 @@ jobs:
               imageName: drydock/u16golall
               imageTag: v7.2.4
           script:
+            - source "/root/.gvm/scripts/gvm"
             - gvm use go1.11.5
             ## This removes the line from /etc/drydock/.env file that sources gvm command.
             - cd /etc/drydock/ && sed -i '$ d' .env
