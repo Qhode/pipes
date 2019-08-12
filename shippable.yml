@@ -938,10 +938,10 @@ jobs:
                 - DOCKER_VERSION: "18.09"
                 - BASE_IMG_RES: "base_aws_x8664_u18"
           script:
-            - export SOURCE_AMI=$(shipctl get_integration_resource_field "$BASE_IMG_RES" "IMAGE_NAME")
+            - export SOURCE_AMI=$(shipctl get_resource_version_key "$BASE_IMG_RES" "IMAGE_NAME")
             - export GITHUB_API_KEY=$(shipctl get_integration_resource_field "github_creds" "TOKEN")
             - export AWS_ACCESS_KEY=$(shipctl get_integration_resource_field "aws_ship_bits_creds" "ACCESSKEY")
-            - export AWS_SECRET_KEY=$(shipctl get_integration_resource_field "aws_ship_bits_creds" "SECRETKEY")  
+            - export AWS_SECRET_KEY=$(shipctl get_integration_resource_field "aws_ship_bits_creds" "SECRETKEY")
             - pushd $(shipctl get_resource_state "pipes_repo")/machineImages/$PROVIDER/$ARCHITECTURE/$OS/$IMG_TYPE
             - cp -R ../../../templates/linux/* .
             - cp -R ../../../templates/$IMG_TYPE/* .
