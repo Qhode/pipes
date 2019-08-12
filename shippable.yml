@@ -37,6 +37,11 @@ resources:
     type: integration
     integration: qhode_gh
 
+  # CREDS for aws
+  - name: aws_ship_bits_creds
+    type: integration
+    integration: aws_bits_access
+
   - name: kermit_repo
     type: gitRepo
     integration: "qhode_gh"
@@ -843,7 +848,7 @@ jobs:
     type: runSh
     dependencyMode: strict
     steps:
-      - IN: kermit_bits_cli
+      - IN: aws_ship_bits_creds
         switch: off
       - IN: github_creds
         switch: off
@@ -880,6 +885,8 @@ jobs:
             # - export RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
             # - export RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - export GITHUB_API_KEY=$(shipctl get_integration_resource_field "github_creds" "TOKEN")
+            - export AWS_ACCESS_KEY=$(shipctl get_integration_resource_field "aws_ship_bits_creds" "ACCESSKEY")
+            - export AWS_SECRET_KEY=$(shipctl get_integration_resource_field "aws_ship_bits_creds" "SECRETKEY")
             - pushd $(shipctl get_resource_state "pipes_repo")/machineImages/$PROVIDER/$ARCHITECTURE/$OS/$IMG_TYPE
             - cp -R ../../../templates/linux/* .
             - cp -R ../../../templates/$IMG_TYPE/* .
@@ -889,6 +896,61 @@ jobs:
             - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
     on_success:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME" "SYSTEM_RUNTIME_LANGUAGE_VERSION=$SYSTEM_RUNTIME_LANGUAGE_VERSION"
+      - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
+    on_failure:
+      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCH/$OS/output.txt
+
+  - name: patch_aws_x8664_u18
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: aws_ship_bits_creds
+        switch: off
+      - IN: github_creds
+        switch: off
+      - IN: pipes_repo
+        switch: off
+      - IN: base_aws_x8664_u18
+      - IN: u18repLib_x8664_build
+      - IN: u16repLib_x8664_build
+      - IN: c7repLib_x8664_build
+      - IN: u18_reqExec_x8664_pack
+      - IN: u16_reqExec_x8664_pack
+      - IN: c7_reqExec_x8664_pack
+      - IN: kreqKick_repo
+      - IN: knodeInit_repo
+      - IN: kexecTemplates_repo
+      - TASK:
+          name: patch_aws_x8664_u18
+          runtime:
+            options:
+              env:
+                - OS: Ubuntu_18.04
+                - ARCHITECTURE: x86_64
+                - VPC_ID: "vpc-266f3241"
+                - SUBNET_ID: "subnet-6df12f24"
+                - SECURITY_GROUP_ID: "sg-f634518c"
+                - REGION: "us-east-1"
+                - RUNTIME_VERSION: "master"
+                - GITHUB_USERNAME: "avinci"
+                - PROVIDER: "aws"
+                - IMG_TYPE: "patch"
+                - DOCKER_VERSION: "18.09"
+                - BASE_IMG_RES: "base_aws_x8664_u18"
+          script:
+            - export SOURCE_AMI=$(shipctl get_integration_resource_field "$BASE_IMG_RES" "IMAGE_NAME")
+            - export GITHUB_API_KEY=$(shipctl get_integration_resource_field "github_creds" "TOKEN")
+            - export AWS_ACCESS_KEY=$(shipctl get_integration_resource_field "aws_ship_bits_creds" "ACCESSKEY")
+            - export AWS_SECRET_KEY=$(shipctl get_integration_resource_field "aws_ship_bits_creds" "SECRETKEY")  
+            - pushd $(shipctl get_resource_state "pipes_repo")/machineImages/$PROVIDER/$ARCHITECTURE/$OS/$IMG_TYPE
+            - cp -R ../../../templates/linux/* .
+            - cp -R ../../../templates/$IMG_TYPE/* .
+            - shipctl replace vars.json
+            - packer validate -var-file=vars.json packer.json
+            - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
+            - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
+    on_success:
+      - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME"
       - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
     on_failure:
       - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCH/$OS/output.txt
