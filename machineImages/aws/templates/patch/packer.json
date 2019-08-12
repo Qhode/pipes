@@ -48,7 +48,7 @@
     },
     {
       "type": "shell",
-      "script": "codeRefresh.sh",
+      "script": "pull.sh",
       "environment_vars": [
         "GITHUB_USERNAME={{user `GITHUB_USERNAME`}}",
         "GITHUB_API_KEY={{user `GITHUB_API_KEY`}}",
