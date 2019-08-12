@@ -962,11 +962,7 @@ jobs:
         switch: off
       - IN: base_aws_x8664_u18
       - IN: u18repLib_x8664_build
-      - IN: u16repLib_x8664_build
-      - IN: c7repLib_x8664_build
       - IN: u18_reqExec_x8664_pack
-      - IN: u16_reqExec_x8664_pack
-      - IN: c7_reqExec_x8664_pack
       - IN: kreqKick_repo
       - IN: knodeInit_repo
       - IN: kexecTemplates_repo
@@ -1073,11 +1069,7 @@ jobs:
         switch: off
       - IN: base_aws_x8664_u16
       - IN: u16repLib_x8664_build
-      - IN: u16repLib_x8664_build
-      - IN: c7repLib_x8664_build
       - IN: u16_reqExec_x8664_pack
-      - IN: u16_reqExec_x8664_pack
-      - IN: c7_reqExec_x8664_pack
       - IN: kreqKick_repo
       - IN: knodeInit_repo
       - IN: kexecTemplates_repo
@@ -1184,10 +1176,6 @@ jobs:
         switch: off
       - IN: base_aws_x8664_c7
       - IN: c7repLib_x8664_build
-      - IN: c7repLib_x8664_build
-      - IN: c7repLib_x8664_build
-      - IN: c7_reqExec_x8664_pack
-      - IN: c7_reqExec_x8664_pack
       - IN: c7_reqExec_x8664_pack
       - IN: kreqKick_repo
       - IN: knodeInit_repo
