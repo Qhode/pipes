@@ -916,7 +916,7 @@ jobs:
           runtime:
             options:
               env:
-                - OS: "u18"
+                - OS: "Ubuntu_18.04"
                 - ARCHITECTURE: x86_64
                 - SOURCE_AMI: "ami-07d0cf3af28718ef8"
                 - VPC_ID: "vpc-266f3241"
@@ -972,7 +972,7 @@ jobs:
           runtime:
             options:
               env:
-                - OS: "u18"
+                - OS: "Ubuntu_18.04"
                 - ARCHITECTURE: x86_64
                 - VPC_ID: "vpc-266f3241"
                 - SUBNET_ID: "subnet-6df12f24"
@@ -1025,7 +1025,7 @@ jobs:
           runtime:
             options:
               env:
-                - OS: "u16"
+                - OS: "Ubuntu_16.04"
                 - ARCHITECTURE: x86_64
                 - SOURCE_AMI: "ami-0cfee17793b08a293"
                 - VPC_ID: "vpc-266f3241"
@@ -1081,7 +1081,7 @@ jobs:
           runtime:
             options:
               env:
-                - OS: "u16"
+                - OS: "Ubuntu_16.04"
                 - ARCHITECTURE: x86_64
                 - VPC_ID: "vpc-266f3241"
                 - SUBNET_ID: "subnet-6df12f24"
@@ -1134,7 +1134,7 @@ jobs:
           runtime:
             options:
               env:
-                - OS: "c7"
+                - OS: "CentOS_7"
                 - ARCHITECTURE: x86_64
                 - SOURCE_AMI: "ami-0b49723d871f1073a"
                 - VPC_ID: "vpc-266f3241"
@@ -1190,7 +1190,7 @@ jobs:
           runtime:
             options:
               env:
-                - OS: "c7"
+                - OS: "CentOS_7"
                 - ARCHITECTURE: x86_64
                 - VPC_ID: "vpc-266f3241"
                 - SUBNET_ID: "subnet-6df12f24"
