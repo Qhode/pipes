@@ -944,7 +944,7 @@ jobs:
         switch: off
       - IN: rt_creds
         switch: off
-      - IN: shipbits_aws_key
+      - IN: shipbits_aws_pem
         switch: off
       - IN: knodeInit_repo
       - IN: pipes_repo
@@ -975,7 +975,7 @@ jobs:
                 - SSH_BASTION_HOST: "3.227.114.92"
                 - SSH_BASTION_USERNAME: "ec2-user"
                 - SSH_BASTION_PRIVATE_KEY_PATH: "/tmp/ship-bits.pem"
-                - PEM_KEY_RES: "shipbits_aws_key"
+                - PEM_KEY_RES: "shipbits_aws_pem"
           script:
             # - export RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
             # - export RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
