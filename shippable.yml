@@ -18,7 +18,7 @@ resources:
     type: state
 
   # Terraform State for ship-bits NAT
-  - name: shipbits_nat_state
+  - name: shipbits_ami_state
     type: state
 
   # PEM key for AWS RC account
@@ -422,22 +422,22 @@ jobs:
         - ./archiveProvisionState.sh kermit saas
         - popd
 
-  - name: shipbits_nat_prov
+  - name: shipbits_ami_prov
     type: runSh
     steps:
       - IN: shipbits_aws_pem
         switch: off
       - IN: shipbits_aws_key
         switch: off
-      - IN: shipbits_nat_state
+      - IN: shipbits_ami_state
         switch: off
       - IN: prov_repo
         switch: off
       - TASK:
           script:
             - pushd $(shipctl get_resource_state "prov_repo")
-            - ./provision.sh shipbits nat ship-bits
-      - OUT: shipbits_nat_state
+            - ./provision.sh shipbits ami ship-bits
+      - OUT: shipbits_ami_state
     on_success:
       script:
         - echo "SUCCESS"
@@ -445,7 +445,7 @@ jobs:
       - script: echo 'FAILURE!'
     always:
       script:
-        - ./archiveProvisionState.sh shipbits nat
+        - ./archiveProvisionState.sh shipbits ami
         - popd
 
   - name: kdb_build
