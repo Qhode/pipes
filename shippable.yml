@@ -961,7 +961,7 @@ jobs:
                 - OS: "Ubuntu_18.04"
                 - ARCHITECTURE: x86_64
                 - SOURCE_AMI: "ami-07d0cf3af28718ef8"
-                - VPC_ID: "vpc-266f3241"
+                - VPC_ID: "vpc-01e8b399ee4f9f356"
                 - SUBNET_ID: "subnet-06de95b9fc0434531"
                 - REGION: "us-east-1"
                 - SYSTEM_RUNTIME_LANGUAGE_VERSION: "master"
