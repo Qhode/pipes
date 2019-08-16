@@ -964,6 +964,7 @@ jobs:
                 - VPC_ID: "vpc-01e8b399ee4f9f356"
                 - SUBNET_ID: "subnet-06de95b9fc0434531"
                 - REGION: "us-east-1"
+                - SECURITY_GROUP_ID: "sg-0e01a1bd2922c5d96"
                 - SYSTEM_RUNTIME_LANGUAGE_VERSION: "master"
                 - RUNTIME_VERSION: "master"
                 - DOCKER_IMAGE_REGISTRY_URL: "pipelines-docker.jfrog.io"

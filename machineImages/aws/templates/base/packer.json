@@ -31,6 +31,7 @@
       "subnet_id": "{{user `SUBNET_ID`}}",
       "associate_public_ip_address": true,
       "source_ami": "{{user `SOURCE_AMI`}}",
+      "security_group_id": "{{user `SECURITY_GROUP_ID`}}",
       "instance_type": "c4.2xlarge",
       "ssh_username": "{{user `SSH_USERNAME`}}",
       "ssh_bastion_host": "{{user `SSH_BASTION_HOST`}}",
