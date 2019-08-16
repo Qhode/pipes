@@ -17,15 +17,29 @@ resources:
   - name: kermit_saas_state
     type: state
 
+  # Terraform State for ship-bits NAT
+  - name: shipbits_nat_state
+    type: state
+
   # PEM key for AWS RC account
   - name: kermit_aws_pem
     type: integration
     integration: aws-rc-pem
 
+  # PEM key for AWS ship-bits account
+  - name: shipbits_aws_pem
+    type: integration
+    integration: ship-bits-pem
+
   # CREDS for AWS RC account
   - name: kermit_aws_key
     type: integration
     integration: aws_rc_access
+
+  # CREDS for AWS ship-bits account
+  - name: shipbits_aws_key
+    type: integration
+    integration: aws_bits_access
 
   # CREDS for RT instance
   - name: rt_creds
@@ -406,6 +420,32 @@ jobs:
     always:
       script:
         - ./archiveProvisionState.sh kermit saas
+        - popd
+
+  - name: shipbits_nat_prov
+    type: runSh
+    steps:
+      - IN: shipbits_aws_pem
+        switch: off
+      - IN: shipbits_aws_key
+        switch: off
+      - IN: shipbits_nat_state
+        switch: off
+      - IN: prov_repo
+        switch: off
+      - TASK:
+          script:
+            - pushd $(shipctl get_resource_state "prov_repo")
+            - ./provision.sh shipbits nat ship-bits
+      - OUT: shipbits_nat_state
+    on_success:
+      script:
+        - echo "SUCCESS"
+    on_failure:
+      - script: echo 'FAILURE!'
+    always:
+      script:
+        - ./archiveProvisionState.sh shipbits nat
         - popd
 
   - name: kdb_build
@@ -1125,7 +1165,7 @@ jobs:
       - IN: knodeInit_repo
       - IN: pipes_repo
         switch: off
-      - IN: c7java_x8664_img
+      - IN: c7java_x8664_buildmg
       - IN: c7node_x8664_img
       - IN: c7cpp_x8664_img
       - IN: c7go_x8664_img
