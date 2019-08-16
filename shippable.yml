@@ -1062,6 +1062,8 @@ jobs:
       - IN: knodeInit_repo
       - IN: pipes_repo
         switch: off
+      - IN: shipbits_aws_pem
+        switch: off
       - IN: u16java_x8664_img
       - IN: u16node_x8664_img
       - IN: u16cpp_x8664_img
@@ -1074,9 +1076,8 @@ jobs:
                 - OS: "Ubuntu_16.04"
                 - ARCHITECTURE: x86_64
                 - SOURCE_AMI: "ami-0cfee17793b08a293"
-                - VPC_ID: "vpc-266f3241"
-                - SUBNET_ID: "subnet-6df12f24"
-                - SECURITY_GROUP_ID: "sg-f634518c"
+                - VPC_ID: "vpc-01e8b399ee4f9f356"
+                - SUBNET_ID: "subnet-06de95b9fc0434531"
                 - REGION: "us-east-1"
                 - SYSTEM_RUNTIME_LANGUAGE_VERSION: "master"
                 - RUNTIME_VERSION: "master"
@@ -1086,6 +1087,10 @@ jobs:
                 - IMG_TYPE: "base"
                 - DOCKER_VERSION: "18.09"
                 - SSH_USERNAME: "ubuntu"
+                - SSH_BASTION_HOST: "3.227.114.92"
+                - SSH_BASTION_USERNAME: "ec2-user"
+                - SSH_BASTION_PRIVATE_KEY_PATH: "/tmp/ship-bits.pem"
+                - PEM_KEY_RES: "shipbits_aws_pem"
           script:
             # - export RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
             # - export RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
@@ -1096,6 +1101,7 @@ jobs:
             - pushd $(shipctl get_resource_state "pipes_repo")/machineImages/$PROVIDER/$ARCHITECTURE/$OS/$IMG_TYPE
             - cp -R ../../../templates/linux/* .
             - cp -R ../../../templates/$IMG_TYPE/* .
+            - ./addPemKey.sh
             - shipctl replace vars.json
             - packer validate -var-file=vars.json packer.json
             - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
@@ -1171,6 +1177,8 @@ jobs:
       - IN: knodeInit_repo
       - IN: pipes_repo
         switch: off
+      - IN: shipbits_aws_pem
+        switch: off
       - IN: c7java_x8664_img
       - IN: c7node_x8664_img
       - IN: c7cpp_x8664_img
@@ -1183,9 +1191,8 @@ jobs:
                 - OS: "CentOS_7"
                 - ARCHITECTURE: x86_64
                 - SOURCE_AMI: "ami-0b49723d871f1073a"
-                - VPC_ID: "vpc-266f3241"
-                - SUBNET_ID: "subnet-6df12f24"
-                - SECURITY_GROUP_ID: "sg-f634518c"
+                - VPC_ID: "vpc-01e8b399ee4f9f356"
+                - SUBNET_ID: "subnet-06de95b9fc0434531"
                 - REGION: "us-east-1"
                 - SYSTEM_RUNTIME_LANGUAGE_VERSION: "master"
                 - RUNTIME_VERSION: "master"
@@ -1195,6 +1202,10 @@ jobs:
                 - IMG_TYPE: "base"
                 - DOCKER_VERSION: "18.09"
                 - SSH_USERNAME: "centos"
+                - SSH_BASTION_HOST: "3.227.114.92"
+                - SSH_BASTION_USERNAME: "ec2-user"
+                - SSH_BASTION_PRIVATE_KEY_PATH: "/tmp/ship-bits.pem"
+                - PEM_KEY_RES: "shipbits_aws_pem"
           script:
             # - export RT_URL=$(shipctl get_integration_resource_field "rt_creds" "RT_URL")
             # - export RT_API_KEY=$(shipctl get_integration_resource_field "rt_creds" "API_KEY")
@@ -1205,6 +1216,7 @@ jobs:
             - pushd $(shipctl get_resource_state "pipes_repo")/machineImages/$PROVIDER/$ARCHITECTURE/$OS/$IMG_TYPE
             - cp -R ../../../templates/linux/* .
             - cp -R ../../../templates/$IMG_TYPE/* .
+            - ./addPemKey.sh
             - shipctl replace vars.json
             - packer validate -var-file=vars.json packer.json
             - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
