@@ -19,7 +19,7 @@
     "SSH_USERNAME": "",
     "SSH_BASTION_HOST": "",
     "SSH_BASTION_USERNAME": "",
-    "SSH_BASTION_PRIVATE_KEY": ""
+    "SSH_BASTION_PRIVATE_KEY_PATH": ""
   },
   "builders": [
     {
@@ -35,7 +35,7 @@
       "ssh_username": "{{user `SSH_USERNAME`}}",
       "ssh_bastion_host": "{{user `SSH_BASTION_HOST`}}",
       "ssh_bastion_username": "{{user `SSH_BASTION_USERNAME`}}",
-      "ssh_bastion_private_key_file": "{{user `SSH_BASTION_PRIVATE_KEY`}}",
+      "ssh_bastion_private_key_file": "{{user `SSH_BASTION_PRIVATE_KEY_PATH`}}",
       "ami_name": "{{user `ARCHITECTURE`}}-{{user `OS`}}-base-ami-{{user `RUNTIME_VERSION`}}-{{isotime \"2006-01-02-1504\"}}",
       "ami_groups": "all",
       "launch_block_device_mappings": [
