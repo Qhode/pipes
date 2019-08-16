@@ -396,7 +396,7 @@ jobs:
       - TASK:
           script:
             - pushd $(shipctl get_resource_state "prov_repo")
-            - ./provision.sh kermit saas
+            - ./provision.sh kermit saas rc-us-east-1
       - OUT: kermit_saas_state
     on_success:
       script:
