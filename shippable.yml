@@ -1165,7 +1165,7 @@ jobs:
       - IN: knodeInit_repo
       - IN: pipes_repo
         switch: off
-      - IN: c7java_x8664_buildmg
+      - IN: c7java_x8664_img
       - IN: c7node_x8664_img
       - IN: c7cpp_x8664_img
       - IN: c7go_x8664_img
