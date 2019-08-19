@@ -392,7 +392,7 @@ resources:
     type: gitRepo
     integration: "qhode_gh"
     pointer:
-      sourceName: "shippable/kermit-reqExec"
+      sourceName: "Shippable/kermit-reqExec"
       branch: master
 
 jobs:
