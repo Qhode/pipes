@@ -991,6 +991,7 @@ jobs:
             - packer validate -var-file=vars.json packer.json
             - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
             - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
+            - [ ! -z "$IMAGE_NAME" ]
     on_success:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME" "SYSTEM_RUNTIME_LANGUAGE_VERSION=$SYSTEM_RUNTIME_LANGUAGE_VERSION"
       - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
@@ -1043,6 +1044,7 @@ jobs:
             - packer validate -var-file=vars.json packer.json
             - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
             - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
+            - [ ! -z "$IMAGE_NAME" ]
     on_success:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME"
       - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
@@ -1106,6 +1108,7 @@ jobs:
             - packer validate -var-file=vars.json packer.json
             - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
             - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
+            - [ ! -z "$IMAGE_NAME" ]
     on_success:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME" "SYSTEM_RUNTIME_LANGUAGE_VERSION=$SYSTEM_RUNTIME_LANGUAGE_VERSION"
       - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
@@ -1158,6 +1161,7 @@ jobs:
             - packer validate -var-file=vars.json packer.json
             - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
             - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
+            - [ ! -z "$IMAGE_NAME" ]
     on_success:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME"
       - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
@@ -1221,6 +1225,7 @@ jobs:
             - packer validate -var-file=vars.json packer.json
             - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
             - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
+            - [ ! -z "$IMAGE_NAME" ]
     on_success:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME" "SYSTEM_RUNTIME_LANGUAGE_VERSION=$SYSTEM_RUNTIME_LANGUAGE_VERSION"
       - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
@@ -1273,6 +1278,7 @@ jobs:
             - packer validate -var-file=vars.json packer.json
             - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
             - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
+            - [ ! -z "$IMAGE_NAME" ]
     on_success:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME"
       - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
