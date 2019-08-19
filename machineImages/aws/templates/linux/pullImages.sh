@@ -40,6 +40,6 @@ cleanup() {
   rm -rf ~/.jfrog
 }
 
-#login
-#pull_images
-#cleanup
+login
+pull_images
+cleanup
