@@ -1033,6 +1033,8 @@ jobs:
                 - DOCKER_VERSION: "18.09"
                 - BASE_IMG_RES: "base_aws_x8664_u18"
                 - SSH_USERNAME: "ubuntu"
+                # add comma separated regions where the AMI has to be copied to
+                - AMI_REGIONS: "ap-south-1"
           script:
             - export SOURCE_AMI=$(shipctl get_resource_version_key "$BASE_IMG_RES" "IMAGE_NAME")
             - export GITHUB_API_KEY=$(shipctl get_integration_resource_field "github_creds" "TOKEN")
@@ -1151,6 +1153,8 @@ jobs:
                 - DOCKER_VERSION: "18.09"
                 - BASE_IMG_RES: "base_aws_x8664_u16"
                 - SSH_USERNAME: "ubuntu"
+                # add comma separated regions where the AMI has to be copied to
+                - AMI_REGIONS: "ap-south-1"
           script:
             - export SOURCE_AMI=$(shipctl get_resource_version_key "$BASE_IMG_RES" "IMAGE_NAME")
             - export GITHUB_API_KEY=$(shipctl get_integration_resource_field "github_creds" "TOKEN")
@@ -1269,6 +1273,8 @@ jobs:
                 - DOCKER_VERSION: "18.09"
                 - BASE_IMG_RES: "base_aws_x8664_c7"
                 - SSH_USERNAME: "centos"
+                # add comma separated regions where the AMI has to be copied to
+                - AMI_REGIONS: "ap-south-1"
           script:
             - export SOURCE_AMI=$(shipctl get_resource_version_key "$BASE_IMG_RES" "IMAGE_NAME")
             - export GITHUB_API_KEY=$(shipctl get_integration_resource_field "github_creds" "TOKEN")
