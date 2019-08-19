@@ -26,7 +26,7 @@ pull_images() {
 
   for IMAGE_NAME in $IMAGE_NAMES_SPACED; do
     echo "Pulling -------------------> $DOCKER_IMAGE_REGISTRY_URL/$IMAGE_NAME:$SYSTEM_RUNTIME_LANGUAGE_VERSION"
-    sudo jfrog rt docker-pull $DOCKER_IMAGE_REGISTRY_URL/$IMAGE_NAME:$SYSTEM_RUNTIME_LANGUAGE_VERSION $RT_REGISTRY_KEY
+    sudo jfrog rt docker-pull $DOCKER_IMAGE_REGISTRY_URL/$IMAGE_NAME:$SYSTEM_RUNTIME_LANGUAGE_VERSION $SOURCE_REPOSITORY
   done
 
   # Clean up master images if we are not building master.
