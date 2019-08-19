@@ -12,7 +12,7 @@ login() {
       mv jfrog /usr/bin/jfrog
     fi
     echo "Logging into artifactory"
-    jfrog rt config --url $RT_URL --user $RT_USER --apikey $RT_API_KEY --interactive=false
+    sudo jfrog rt config --url $RT_URL --user $RT_USER --apikey $RT_API_KEY --interactive=false
   else
     echo "Login creds not present. Skipping login."
   fi
@@ -26,7 +26,7 @@ pull_images() {
 
   for IMAGE_NAME in $IMAGE_NAMES_SPACED; do
     echo "Pulling -------------------> $DOCKER_IMAGE_REGISTRY_URL/$IMAGE_NAME:$SYSTEM_RUNTIME_LANGUAGE_VERSION"
-    sudo docker pull $DOCKER_IMAGE_REGISTRY_URL/$IMAGE_NAME:$SYSTEM_RUNTIME_LANGUAGE_VERSION
+    sudo jfrog rt docker-pull $DOCKER_IMAGE_REGISTRY_URL/$IMAGE_NAME:$SYSTEM_RUNTIME_LANGUAGE_VERSION $RT_REGISTRY_KEY
   done
 
   # Clean up master images if we are not building master.
