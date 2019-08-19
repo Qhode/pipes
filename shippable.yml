@@ -1047,6 +1047,7 @@ jobs:
             - packer validate -var-file=vars.json packer.json
             - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
             - cat output.txt
+            - cat manifest.json
             - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
             - '[ ! -z "$IMAGE_NAME" ]'
     on_success:
