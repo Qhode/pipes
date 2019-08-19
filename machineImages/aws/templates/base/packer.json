@@ -18,7 +18,8 @@
     "SSH_USERNAME": "",
     "SSH_BASTION_HOST": "",
     "SSH_BASTION_USERNAME": "",
-    "SSH_BASTION_PRIVATE_KEY_PATH": ""
+    "SSH_BASTION_PRIVATE_KEY_PATH": "",
+    "SOURCE_REPOSITORY": ""
   },
   "builders": [
     {
@@ -81,7 +82,8 @@
         "RT_URL={{user `RT_URL`}}",
         "RT_USER={{user `RT_USER`}}",
         "RT_API_KEY={{user `RT_API_KEY`}}",
-        "SYSTEM_RUNTIME_LANGUAGE_VERSION={{user `SYSTEM_RUNTIME_LANGUAGE_VERSION`}}"
+        "SYSTEM_RUNTIME_LANGUAGE_VERSION={{user `SYSTEM_RUNTIME_LANGUAGE_VERSION`}}",
+        "SOURCE_REPOSITORY={{user `SOURCE_REPOSITORY`}}"
       ],
       "execute_command": "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'"
     }
