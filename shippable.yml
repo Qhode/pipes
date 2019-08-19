@@ -1048,8 +1048,19 @@ jobs:
             - export AWS_POLL_DELAY_SECONDS=10
             - export AWS_MAX_ATTEMPTS=600
             - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
-            - cat output.txt
-            - cat manifest.json
+            - echo manifest.json | jq .
+            - |
+              export amis=$(cat manifest.json | jq -r '.builds[0].artifact_id | split(",")')
+              export ami_count=$(echo $amis | jq '. | length')
+              for i in $(seq 1 $ami_count); do
+                ami=$(echo $amis | jq '.['"$i-1"']')
+                ami_region=$(echo $ami | jq -r 'split(":") | .[0]')
+                ami_id=$(echo $ami | jq -r 'split(":") | .[1]')
+                if [ "$ami_region" == "$REGION" ]; then
+                  export IMAGE_NAME="$ami_id"
+                fi
+                shipctl put_resource_state_multi $JOB_NAME "$ami_region=$ami_id"
+              done
             - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
             - '[ ! -z "$IMAGE_NAME" ]'
     on_success:
@@ -1169,8 +1180,22 @@ jobs:
             - cp -R ../../../templates/$IMG_TYPE/* .
             - shipctl replace vars.json
             - packer validate -var-file=vars.json packer.json
+            - export AWS_POLL_DELAY_SECONDS=10
+            - export AWS_MAX_ATTEMPTS=600
             - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
-            - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
+            - echo manifest.json | jq .
+            - |
+              export amis=$(cat manifest.json | jq -r '.builds[0].artifact_id | split(",")')
+              export ami_count=$(echo $amis | jq '. | length')
+              for i in $(seq 1 $ami_count); do
+                ami=$(echo $amis | jq '.['"$i-1"']')
+                ami_region=$(echo $ami | jq -r 'split(":") | .[0]')
+                ami_id=$(echo $ami | jq -r 'split(":") | .[1]')
+                if [ "$ami_region" == "$REGION" ]; then
+                  export IMAGE_NAME="$ami_id"
+                fi
+                shipctl put_resource_state_multi $JOB_NAME "$ami_region=$ami_id"
+              done
             - '[ ! -z "$IMAGE_NAME" ]'
     on_success:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME"
@@ -1289,8 +1314,22 @@ jobs:
             - cp -R ../../../templates/$IMG_TYPE/* .
             - shipctl replace vars.json
             - packer validate -var-file=vars.json packer.json
+            - export AWS_POLL_DELAY_SECONDS=10
+            - export AWS_MAX_ATTEMPTS=600
             - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
-            - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
+            - echo manifest.json | jq .
+            - |
+              export amis=$(cat manifest.json | jq -r '.builds[0].artifact_id | split(",")')
+              export ami_count=$(echo $amis | jq '. | length')
+              for i in $(seq 1 $ami_count); do
+                ami=$(echo $amis | jq '.['"$i-1"']')
+                ami_region=$(echo $ami | jq -r 'split(":") | .[0]')
+                ami_id=$(echo $ami | jq -r 'split(":") | .[1]')
+                if [ "$ami_region" == "$REGION" ]; then
+                  export IMAGE_NAME="$ami_id"
+                fi
+                shipctl put_resource_state_multi $JOB_NAME "$ami_region=$ami_id"
+              done
             - '[ ! -z "$IMAGE_NAME" ]'
     on_success:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME"
