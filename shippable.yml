@@ -1061,7 +1061,6 @@ jobs:
                 fi
                 shipctl put_resource_state_multi $JOB_NAME "$ami_region=$ami_id"
               done
-            - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
             - '[ ! -z "$IMAGE_NAME" ]'
     on_success:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME"
