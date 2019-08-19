@@ -13,7 +13,8 @@
     "DOCKER_VERSION": "",
     "OS": "",
     "ARCHITECTURE": "",
-    "SSH_USERNAME": ""
+    "SSH_USERNAME": "",
+    "AMI_REGIONS": ""
   },
   "builders": [
     {
@@ -31,6 +32,7 @@
       "ssh_username": "{{user `SSH_USERNAME`}}",
       "ami_name": "{{user `ARCHITECTURE`}}-{{user `OS`}}-base-ami-{{user `RUNTIME_VERSION`}}-patch-{{isotime \"2006-01-02-1504\"}}",
       "ami_groups": "all",
+      "ami_regions": "{{user `AMI_REGIONS`}}",
       "launch_block_device_mappings": [
         {
           "device_name": "/dev/sda1",
