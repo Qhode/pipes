@@ -997,7 +997,7 @@ jobs:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME" "SYSTEM_RUNTIME_LANGUAGE_VERSION=$SYSTEM_RUNTIME_LANGUAGE_VERSION"
       - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
     on_failure:
-      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCH/$OS/output.txt
+      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCHITECTURE/$OS/output.txt
 
   - name: patch_aws_x8664_u18
     type: runSh
@@ -1045,6 +1045,8 @@ jobs:
             - cp -R ../../../templates/$IMG_TYPE/* .
             - shipctl replace vars.json
             - packer validate -var-file=vars.json packer.json
+            - epxort AWS_POLL_DELAY_SECONDS=10
+            - export AWS_MAX_ATTEMPTS=600
             - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
             - cat output.txt
             - cat manifest.json
@@ -1054,7 +1056,7 @@ jobs:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME"
       - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
     on_failure:
-      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCH/$OS/output.txt
+      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCHITECTURE/$OS/output.txt
 
   - name: base_aws_x8664_u16
     type: runSh
@@ -1119,7 +1121,7 @@ jobs:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME" "SYSTEM_RUNTIME_LANGUAGE_VERSION=$SYSTEM_RUNTIME_LANGUAGE_VERSION"
       - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
     on_failure:
-      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCH/$OS/output.txt
+      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCHITECTURE/$OS/output.txt
 
   - name: patch_aws_x8664_u16
     type: runSh
@@ -1174,7 +1176,7 @@ jobs:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME"
       - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
     on_failure:
-      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCH/$OS/output.txt
+      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCHITECTURE/$OS/output.txt
 
   - name: base_aws_x8664_c7
     type: runSh
@@ -1239,7 +1241,7 @@ jobs:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME" "SYSTEM_RUNTIME_LANGUAGE_VERSION=$SYSTEM_RUNTIME_LANGUAGE_VERSION"
       - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
     on_failure:
-      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCH/$OS/output.txt
+      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCHITECTURE/$OS/output.txt
 
   - name: patch_aws_x8664_c7
     type: runSh
@@ -1294,7 +1296,7 @@ jobs:
       - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME"
       - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
     on_failure:
-      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCH/$OS/output.txt
+      - script: cat $(shipctl get_resource_state pipes_repo)/aws/$ARCHITECTURE/$OS/output.txt
 
   - name: u18repLib_x8664_build
     type: runSh
