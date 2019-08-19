@@ -26,7 +26,7 @@ pull_images() {
 
   for IMAGE_NAME in $IMAGE_NAMES_SPACED; do
     echo "Pulling -------------------> $DOCKER_IMAGE_REGISTRY_URL/$IMAGE_NAME:$SYSTEM_RUNTIME_LANGUAGE_VERSION"
-    sudo docker pull $IMAGE_NAME:$SYSTEM_RUNTIME_LANGUAGE_VERSION
+    sudo docker pull $DOCKER_IMAGE_REGISTRY_URL/$IMAGE_NAME:$SYSTEM_RUNTIME_LANGUAGE_VERSION
   done
 
   # Clean up master images if we are not building master.
