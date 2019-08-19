@@ -38,6 +38,7 @@ pull_images() {
 cleanup() {
   echo "Cleaning up jfrog credentials"
   rm -rf ~/.jfrog
+  rm -rf ~/.docker
 }
 
 login
