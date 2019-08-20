@@ -1228,7 +1228,7 @@ jobs:
               env:
                 - OS: "CentOS_7"
                 - ARCHITECTURE: x86_64
-                - SOURCE_AMI: "ami-0b49723d871f1073a"
+                - SOURCE_AMI: "ami-ae7bfdb8"
                 - VPC_ID: "vpc-01e8b399ee4f9f356"
                 - SUBNET_ID: "subnet-06de95b9fc0434531"
                 - REGION: "us-east-1"
