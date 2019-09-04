@@ -727,6 +727,11 @@ jobs:
             - RT_USER=$(shipctl get_integration_resource_field "rt_creds" "USER")
             - RT_REGISTRY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY")
             - RT_REGISTRY_KEY=$(shipctl get_integration_resource_field "rt_creds" "REGISTRY_KEY")
+            - RT_SERVER=entplus
+            - sed -i "s|{{RT_SERVER}}|$RT_SERVER|g" Dockerfile
+            - sed -i "s|{{RT_URL}}|$RT_URL|g" Dockerfile
+            - sed -i "s|{{RT_USER}}|$RT_USER|g" Dockerfile
+            - sed -i "s|{{RT_API_KEY}}|$RT_API_KEY|g" Dockerfile
             - IMG_NAME="$RT_REGISTRY/$IMG_NAME"
             - echo "Building $IMG_NAME:$REL_VER"
             - docker build --no-cache -t=$IMG_NAME:$REL_VER .
