@@ -2302,3 +2302,58 @@ jobs:
         - shipctl put_resource_state_multi $JOB_NAME "versionName=$REPO_COMMIT" "FILE_REPO_COMMIT_SHA=$REPO_COMMIT" "S3_BUCKET=$S3_BUCKET_BINARY_DIR" "S3_FILENAME=$TAR_FILENAME" "ARCHITECTURE=$RCHITECTURE" "OS=$OS"
         - echo "Publishing build info"
         - jfrog rt bp $JOB_NAME $BUILD_NUMBER --build-url $BUILD_URL
+
+### Build GCP AMIs
+
+  - name: base_gcp_x8664_u16
+    type: runSh
+    dependencyMode: strict
+    steps:
+      - IN: ship_bits_gcp
+        switch: off
+      - IN: jfrog_bbs_creds
+        switch: off
+      - IN: pipes_repo
+        switch: off
+      - TASK:
+          name: base_gcp_x8664_u16
+          runtime:
+            options:
+              env:
+                - OS: "Ubuntu_16.04"
+                - ARCHITECTURE: x86_64
+                - IMG_TYPE: "base"
+                - SYSTEM_RUNTIME_LANGUAGE_VERSION: "master"
+                - RUNTIME_VERSION: "master"
+                - PROVIDER: "gcp"
+                - DOCKER_VERSION: "18.09"
+                - SOURCE_IMAGE_FAMILY: "ubuntu-1604-lts"
+                - MACHINE_TYPE: "n1-standard-8"
+                - REGION: "us-east1"
+                - ZONE: "us-east1-b"
+                - PROJECT_ID: "ship-bits"
+                - SERVICE_ACCOUNT_JSON: "gcp_key.json"
+                - REL_VER: "master"
+                - SSH_USER: "root"
+                - MODIFY_KERNEL: "false"
+          script:
+            - export BBS_USERNAME=$(shipctl get_integration_resource_field "jfrog_bbs_creds" "BBS_USERNAME")
+            - export BBS_API_KEY=$(shipctl get_integration_resource_field "jfrog_bbs_creds" "BBS_API_KEY")
+            - echo $(shipctl get_integration_resource_field ship_bits_gcp JSON_key) > $SERVICE_ACCOUNT_JSON
+            - |
+               export IMG_VER=$REL_VER
+               export REL_VER_DASH=${REL_VER//./-}
+               export FAM_NAME=$REL_VER_DASH"-prep-u16-x86-64"
+            - pushd $(shipctl get_resource_state "pipes_repo")/machineImages/$PROVIDER/$ARCHITECTURE/$OS/$IMG_TYPE
+            - cp -R ../../../templates/linux/* .
+            - cp -R ../../../templates/$IMG_TYPE/* .
+            - shipctl replace vars.json
+            - packer validate -var-file=vars.json packer.json
+            - packer build -machine-readable -var-file=vars.json packer.json 2>&1 | tee output.txt
+            - export IMAGE_NAME=$(cat output.txt | awk -F, '$0 ~/artifact,0,id/ {print $6}' | cut -d':' -f 2)
+            - '[ ! -z "$IMAGE_NAME" ]'
+    on_success:
+      - script: shipctl put_resource_state_multi $JOB_NAME "versionName=$IMAGE_NAME" "IMAGE_NAME=$IMAGE_NAME" "SYSTEM_RUNTIME_LANGUAGE_VERSION=$SYSTEM_RUNTIME_LANGUAGE_VERSION"
+      - script: shipctl put_resource_state_multi $JOB_NAME "RUNTIME_VERSION=$RUNTIME_VERSION" "ARCHITECTURE=$ARCHITECTURE" "OS=$OS" "DOCKER_VERSION=$DOCKER_VERSION"
+    on_failure:
+      - script: cat $(shipctl get_resource_state pipes_repo)/gcp/$ARCHITECTURE/$OS/output.txt
