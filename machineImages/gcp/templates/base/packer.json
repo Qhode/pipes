@@ -1,0 +1,85 @@
+{
+  "variables": {
+    "machine_type": "",
+    "region": "",
+    "zone": "",
+    "project_id": "",
+    "service_account_json": "",
+    "ssh_username": "",
+    "REL_VER": "",
+    "IMG_VER": "",
+    "SOURCE_IMAGE_FAMILY": "",
+    "FAM_NAME": "",
+    "ARCHITECTURE": "",
+    "OS": "",
+    "DOCKER_VERSION": "",
+    "MODIFY_KERNEL": "",
+    "KERNEL_VER": "",
+    "BBS_USERNAME": "",
+    "BBS_API_KEY": ""
+  },
+  "builders": [
+    {
+      "type": "googlecompute",
+      "state_timeout": "15m",
+      "project_id": "{{user `project_id`}}",
+      "machine_type": "{{user `machine_type`}}",
+      "source_image_family": "{{user `SOURCE_IMAGE_FAMILY`}}",
+      "region": "{{user `region`}}",
+      "zone": "{{user `zone`}}",
+      "image_description": "Prep Image for {{user `FAM_NAME`}}",
+      "image_family": "{{user `FAM_NAME`}}",
+      "image_name": "{{user `FAM_NAME`}}-{{isotime \"2006-01-02-1504\"}}",
+      "disk_size": 150,
+      "disk_type": "pd-ssd",
+      "ssh_username": "{{ user `ssh_username`}}",
+      "account_file": "{{ user `service_account_json`}}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 60",
+        "uname -a",
+        "uptime"
+      ]
+    },
+    {
+      "destination": "/tmp/99-shippable.conf",
+      "source": "99-shippable.conf",
+      "type": "file"
+    },
+    {
+      "type": "shell",
+      "script": "copyConfigs.sh"
+    },
+    {
+      "type": "shell",
+      "script": "modifyKernel.sh",
+      "environment_vars": [
+        "MODIFY_KERNEL={{user `MODIFY_KERNEL`}}",
+        "KERNEL_VER={{user `KERNEL_VER`}}"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo reboot"
+      ],
+      "expect_disconnect": true
+    },
+    {
+      "type": "shell",
+      "script": "init.sh",
+      "pause_before": "20s",
+      "environment_vars": [
+        "BBS_USERNAME={{user `BBS_USERNAME`}}",
+        "BBS_API_KEY={{user `BBS_API_KEY`}}",
+        "RUNTIME_VERSION={{user `RUNTIME_VERSION`}}",
+        "DOCKER_VERSION={{user `DOCKER_VERSION`}}"
+      ],
+      "execute_command": "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'"
+    }
+  ]
+}
